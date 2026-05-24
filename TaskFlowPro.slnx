@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="Business/Business.csproj" Id="42e367d6-66b7-4df2-b876-82fc47830ccb" />
+  <Project Path="Data/Data.csproj" Id="5fd2fc4a-ba5b-4da3-bcd9-d57afd884129" />
+  <Project Path="DataAccess/DataAccess.csproj" Id="4cff722e-a579-4c68-8a24-70da8ba8f477" />
+  <Project Path="DTOs/DTOs.csproj" Id="2d7d27a6-5765-4a23-b47f-ed22db8bcf4a" />
+  <Project Path="TaskFlowPro/TaskFlowPro.csproj" />
+</Solution>

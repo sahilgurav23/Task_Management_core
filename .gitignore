@@ -1,0 +1,59 @@
+## Visual Studio
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.patch
+*.diff
+*.orig
+*.rej
+
+## .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Node.js / Angular
+node_modules/
+dist/
+tmp/
+out-tsc/
+bazel-out/
+.angular/
+.sass-cache/
+connect.lock
+coverage/
+libpeerconnection.log
+testem.log
+typings/
+npm-debug.log
+yarn-error.log
+
+## IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+## System files
+.DS_Store
+Thumbs.db
+
+## Secrets and logs
+*.log
+# Keep core appsettings, but ignore environment-specific secrets if needed
+!TaskFlowPro/appsettings.json
+!TaskFlowPro/appsettings.Development.json
+# appsettings.Production.json
