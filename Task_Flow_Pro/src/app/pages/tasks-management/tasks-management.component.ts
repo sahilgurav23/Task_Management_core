@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -7,7 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
+import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.component';
 
 interface Task {
   id: number;
@@ -31,12 +33,14 @@ interface Task {
     MatChipsModule,
     MatPaginatorModule,
     MatCheckboxModule,
+    MatDialogModule,
     LayoutComponent
   ],
   templateUrl: './tasks-management.component.html',
   styleUrl: './tasks-management.component.css'
 })
 export class TasksManagementComponent {
+  private dialog = inject(MatDialog);
   displayedColumns: string[] = ['name', 'priority', 'assignee', 'dueDate', 'actions'];
   
   tasks: Task[] = [
@@ -88,6 +92,21 @@ export class TasksManagementComponent {
   ];
 
   filteredTasks: Task[] = [...this.tasks];
+
+  openAddTaskDialog() {
+    const dialogRef = this.dialog.open(CreateEditTaskComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('The dialog was closed', result);
+        // Handle new task addition here if needed
+      }
+    });
+  }
 
   onTabChange(event: any) {
     const label = event.tab.textLabel;

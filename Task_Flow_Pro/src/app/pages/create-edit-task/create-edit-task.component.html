@@ -1,1 +1,76 @@
-<p>create-edit-task works!</p>
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
+    <p class="subtitle">Fill in the details below to assign a new task within the workspace.</p>
+  </div>
+
+  <form [formGroup]="taskForm" (ngSubmit)="onSave()" class="task-form">
+    <div class="form-card">
+      <!-- Task Title -->
+      <div class="form-field-group full-width">
+        <label>Task Title</label>
+        <mat-form-field appearance="outline">
+          <input matInput formControlName="title" placeholder="e.g., Q3 Infrastructure Audit">
+          <mat-error *ngIf="taskForm.get('title')?.hasError('required')">Title is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Description -->
+      <div class="form-field-group full-width">
+        <label>Description</label>
+        <mat-form-field appearance="outline">
+          <textarea matInput formControlName="description" rows="4" placeholder="Provide detailed context, acceptance criteria, and expected outcomes..."></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Priority and Status -->
+      <div class="form-row">
+        <div class="form-field-group">
+          <label>Priority</label>
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="priority">
+              <mat-option *ngFor="let p of priorities" [value]="p">{{p}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-group">
+          <label>Status</label>
+          <mat-form-field appearance="outline">
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let s of statuses" [value]="s">{{s}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Assign User and Due Date -->
+      <div class="form-row">
+        <div class="form-field-group">
+          <label>Assign User</label>
+          <mat-form-field appearance="outline">
+            <mat-icon matPrefix class="user-prefix-icon">person_outline</mat-icon>
+            <mat-select formControlName="assignee">
+              <mat-option *ngFor="let user of users" [value]="user.name">{{user.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="form-field-group">
+          <label>Due Date</label>
+          <mat-form-field appearance="outline">
+            <input matInput [matDatepicker]="picker" formControlName="dueDate" placeholder="mm/dd/yyyy">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-button type="button" (click)="onCancel()" class="cancel-btn">Cancel</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="taskForm.invalid" class="save-btn">
+        <mat-icon>save</mat-icon>
+        Save Task
+      </button>
+    </div>
+  </form>
+</div>
