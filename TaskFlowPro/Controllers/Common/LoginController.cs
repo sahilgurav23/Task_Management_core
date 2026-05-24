@@ -8,11 +8,11 @@ namespace TaskFlowPro.Controllers.Common
     [ApiController]
     public class LoginController : ControllerBase
     {
-        private readonly ILoginService _loginService;
+        private readonly ILoginService loginService;
 
         public LoginController(ILoginService loginService)
         {
-            _loginService = loginService;
+            this.loginService = loginService;
         }
 
         [HttpPost("validate")]
@@ -23,7 +23,7 @@ namespace TaskFlowPro.Controllers.Common
                 return BadRequest(ModelState);
             }
 
-            var result = await _loginService.ValidateLoginAsync(request);
+            var result = await loginService.ValidateLoginAsync(request);
 
             if (!result.IsValid)
             {

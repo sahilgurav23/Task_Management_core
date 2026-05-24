@@ -1,0 +1,240 @@
+.tasks-container {
+  padding: 24px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 64px);
+}
+
+.tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.header-text h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.header-text p {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.add-task-btn {
+  background-color: #0052cc !important;
+  border-radius: 6px;
+  padding: 0 20px;
+  height: 44px;
+  font-weight: 600;
+}
+
+.tasks-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs Styling */
+.tasks-tabs {
+  padding: 8px 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+::ng-deep .tasks-tabs .mat-mdc-tab-header {
+  border-bottom: none !important;
+}
+
+::ng-deep .tasks-tabs .mat-mdc-tab {
+  height: 48px;
+  min-width: 100px;
+}
+
+/* Table Styling */
+.table-container {
+  overflow-x: auto;
+}
+
+.tasks-table {
+  width: 100%;
+  background: transparent;
+}
+
+.tasks-table th {
+  background-color: #f9fafb;
+  color: #4b5563;
+  font-weight: 600;
+  text-transform: none;
+  font-size: 14px;
+  padding: 16px !important;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.tasks-table td {
+  padding: 16px !important;
+  border-bottom: 1px solid #f3f4f6;
+  color: #111827;
+  font-size: 14px;
+}
+
+/* Task Name Cell */
+.task-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-icon mat-icon {
+  color: #0052cc;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.circle-outline {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #d1d5db;
+  border-radius: 50%;
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-title {
+  font-weight: 600;
+  color: #111827;
+}
+
+.task-dept {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: #9ca3af !important;
+}
+
+/* Priority Chips */
+.priority-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.priority-critical {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.priority-high {
+  background-color: #ffedd5;
+  color: #9a3412;
+}
+
+.priority-medium {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.priority-low {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+/* Assignee Cell */
+.assignee-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar.initials {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.assignee-name {
+  font-weight: 500;
+}
+
+/* Footer & Pagination */
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.showing-text {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-num {
+  min-width: 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  font-size: 14px;
+  border-radius: 4px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tasks-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .add-task-btn {
+    width: 100%;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+}
