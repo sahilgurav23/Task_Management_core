@@ -1,0 +1,54 @@
+<mat-toolbar class="top-toolbar">
+  <button mat-icon-button (click)="onToggleSidebar()" class="menu-btn">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" placeholder="Search tasks, reports, users..." class="search-input">
+    </div>
+  </div>
+
+  <span class="spacer"></span>
+
+  <!-- Action Icons -->
+  <div class="actions-section">
+    <button mat-icon-button class="notification-btn">
+      <div class="notification-wrapper">
+        <mat-icon>notifications_none</mat-icon>
+        <span class="notification-dot"></span>
+      </div>
+    </button>
+
+    <div class="vertical-divider"></div>
+
+    <!-- User Profile -->
+    <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile-btn">
+      <div class="user-info">
+        <div class="avatar-wrapper">
+          <img src="https://ui-avatars.com/api/?name=Ajay+N&background=0D8ABC&color=fff" alt="User Avatar" class="user-avatar">
+        </div>
+        <span class="user-name">Ajay N.</span>
+        <mat-icon class="dropdown-icon">expand_more</mat-icon>
+      </div>
+    </button>
+
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      <button mat-menu-item>
+        <mat-icon>person</mat-icon>
+        <span>My Profile</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>settings</mat-icon>
+        <span>Settings</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>
+        <mat-icon>logout</mat-icon>
+        <span>Sign Out</span>
+      </button>
+    </mat-menu>
+  </div>
+</mat-toolbar>

@@ -1,0 +1,106 @@
+.sidebar-wrapper {
+  height: 100%;
+  background-color: #0f172a; /* Dark navy background */
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Section */
+.sidebar-header {
+  height: 70px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+  background-color: #2563eb;
+  border-radius: 6px;
+}
+
+.brand-name {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Navigation List */
+.sidebar-nav {
+  padding-top: 16px !important;
+}
+
+.nav-list-item {
+  height: 54px !important;
+  margin: 4px 12px !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.item-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-icon {
+  color: #94a3b8; /* Slate 400 */
+  margin-right: 16px !important;
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.nav-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+/* Active State */
+.active-item {
+  background-color: #2563eb !important; /* Primary Blue */
+}
+
+.active-item .nav-icon,
+.active-item .nav-label {
+  color: #ffffff !important;
+}
+
+/* Hover State */
+.nav-list-item:not(.active-item):hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.nav-list-item:not(.active-item):hover .nav-icon,
+.nav-list-item:not(.active-item):hover .nav-label {
+  color: #ffffff;
+}
+
+/* Active Indicator */
+.active-indicator {
+  position: absolute;
+  left: -12px;
+  top: 15%;
+  height: 70%;
+  width: 4px;
+  background-color: #ffffff;
+  border-radius: 0 4px 4px 0;
+}
+
+/* Material Overrides */
+::ng-deep .mat-mdc-list-item-stale-wrapper {
+  display: none !important;
+}
+
+::ng-deep .nav-list-item .mdc-list-item__content {
+  padding: 0 12px !important;
+}

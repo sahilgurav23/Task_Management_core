@@ -1,0 +1,56 @@
+<app-layout>
+  <!-- Header -->
+  <div class="content-header">
+    <div>
+      <h1>Dashboard Overview</h1>
+      <p>Track your key metrics and project health.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-button [matMenuTriggerFor]="menu" class="period-selector">
+        This Week
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>This Week</button>
+        <button mat-menu-item>This Month</button>
+        <button mat-menu-item>This Year</button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <mat-card *ngFor="let card of summaryCards" class="summary-card">
+      <div class="card-content">
+        <h3>{{ card.title }}</h3>
+        <div class="card-value">{{ card.value }}</div>
+        <div class="card-indicator" [class]="card.color">
+          {{ card.indicator }}
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    <!-- Tasks by Status Chart -->
+    <mat-card class="chart-card">
+      <div class="chart-header">
+        <h3>Tasks by Status</h3>
+      </div>
+      <div class="chart-placeholder">
+        <!-- Chart placeholder - blank as requested -->
+      </div>
+    </mat-card>
+
+    <!-- Priority Breakdown Chart -->
+    <mat-card class="chart-card">
+      <div class="chart-header">
+        <h3>Priority Breakdown</h3>
+      </div>
+      <div class="chart-placeholder">
+        <!-- Chart placeholder - blank as requested -->
+      </div>
+    </mat-card>
+  </div>
+</app-layout>

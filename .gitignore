@@ -1,4 +1,4 @@
-## Visual Studio
+## Visual Studio & .NET (Covers TaskFlowPro, Business, Data, etc.)
 .vs/
 [Bb]in/
 [Oo]bj/
@@ -11,26 +11,26 @@
 *.orig
 *.rej
 
-## .NET Core
+## .NET Core Specifics
 project.lock.json
 project.fragment.lock.json
 artifacts/
 
-## Node.js / Angular
-node_modules/
-dist/
-tmp/
-out-tsc/
-bazel-out/
-.angular/
-.sass-cache/
-connect.lock
-coverage/
-libpeerconnection.log
-testem.log
-typings/
-npm-debug.log
-yarn-error.log
+## Angular Frontend (Task_Flow_Pro)
+Task_Flow_Pro/node_modules/
+Task_Flow_Pro/dist/
+Task_Flow_Pro/tmp/
+Task_Flow_Pro/out-tsc/
+Task_Flow_Pro/bazel-out/
+Task_Flow_Pro/.angular/
+Task_Flow_Pro/.sass-cache/
+Task_Flow_Pro/connect.lock
+Task_Flow_Pro/coverage/
+Task_Flow_Pro/libpeerconnection.log
+Task_Flow_Pro/testem.log
+Task_Flow_Pro/typings/
+Task_Flow_Pro/npm-debug.log
+Task_Flow_Pro/yarn-error.log
 
 ## IDEs and editors
 .idea/
@@ -51,9 +51,10 @@ yarn-error.log
 .DS_Store
 Thumbs.db
 
-## Secrets and logs
+## Project Settings & Secrets
 *.log
-# Keep core appsettings, but ignore environment-specific secrets if needed
+# Explicitly track core appsettings for TaskFlowPro (Web API)
 !TaskFlowPro/appsettings.json
 !TaskFlowPro/appsettings.Development.json
-# appsettings.Production.json
+# Ignore potential production secrets
+# TaskFlowPro/appsettings.Production.json

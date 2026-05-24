@@ -1,0 +1,153 @@
+<div class="login-container">
+
+    <!-- Login Card -->
+    <mat-card class="login-card">
+
+        <!-- Logo -->
+        <div class="logo-section">
+           
+            <h1>TaskFlow Pro</h1>
+
+            <p>
+                Sign in to access your workspace
+            </p>
+        </div>
+
+        <!-- Reactive Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()"
+        >
+
+            <!-- Email Field -->
+            <div class="form-group">
+
+                <mat-form-field appearance="outline" class="full-width">
+
+                    <mat-icon matPrefix>
+                        email
+                    </mat-icon>
+
+                    <mat-label>Email Address</mat-label>
+
+                    <input
+                        matInput
+                        type="email"
+                        placeholder="admin@company.com"
+                        formControlName="email"
+                    >
+
+                    <!-- Error Icon -->
+                    <mat-icon
+                        matSuffix
+                        color="warn"
+                        *ngIf="email?.invalid && email?.touched"
+                    >
+                        error
+                    </mat-icon>
+
+                    <!-- Required Validation -->
+                    <mat-error *ngIf="email?.hasError('required')">
+                        Email address is required
+                    </mat-error>
+
+                    <!-- Email Format Validation -->
+                    <mat-error *ngIf="email?.hasError('email')">
+                        Valid email format is required
+                    </mat-error>
+
+                </mat-form-field>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+
+                <div class="password-header">
+
+                    <a href="javascript:void(0)">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+                <mat-form-field
+                    appearance="outline"
+                    class="full-width"
+                >
+
+                    <mat-icon matPrefix>
+                        lock
+                    </mat-icon>
+
+                    <mat-label>Password</mat-label>
+
+                    <input
+                        matInput
+                        [type]="hidePassword ? 'password' : 'text'"
+                        placeholder="Enter password"
+                        formControlName="password"
+                    >
+
+                    <!-- Show Hide Password -->
+                    <button
+                        type="button"
+                        mat-icon-button
+                        matSuffix
+                        (click)="hidePassword = !hidePassword"
+                    >
+
+                        <mat-icon>
+                            {{ hidePassword ? 'visibility_off' : 'visibility' }}
+                        </mat-icon>
+
+                    </button>
+
+                    <!-- Required Validation -->
+                    <mat-error *ngIf="password?.hasError('required')">
+                        Password is required
+                    </mat-error>
+
+                    <!-- Minimum Length Validation -->
+                    <mat-error *ngIf="password?.hasError('minlength')">
+                        Password must be minimum 6 characters
+                    </mat-error>
+
+                </mat-form-field>
+            </div>
+
+            <!-- Error Message -->
+            <div *ngIf="errorMessage" class="error-message">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Login Button -->
+            <button
+            mat-raised-button
+            color="primary"
+            class="login-btn"
+            type="submit"
+            [disabled]="isLoading"
+        >
+            <span class="btn-text" *ngIf="!isLoading">Sign In</span>
+            <span class="btn-text" *ngIf="isLoading">Signing in...</span>
+
+            <mat-icon *ngIf="!isLoading" class="btn-icon">
+                arrow_forward
+            </mat-icon>
+            <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+        </button>
+
+        </form>
+
+        <!-- Footer -->
+        <div class="footer-text">
+
+            Don't have an account?
+
+            <a href="javascript:void(0)">
+                Contact Administrator
+            </a>
+
+        </div>
+
+    </mat-card>
+
+</div>
