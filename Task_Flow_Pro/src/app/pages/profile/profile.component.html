@@ -1,0 +1,90 @@
+<app-layout>
+  <div class="profile-settings-container">
+    <div class="header-section">
+      <h1>Profile Settings</h1>
+      <p>Manage your account details and security preferences.</p>
+    </div>
+
+    <div class="profile-content-card">
+      <!-- Left Side: Avatar Section -->
+      <div class="avatar-section">
+        <div class="avatar-container">
+          <img [src]="profileImageUrl" alt="Profile Picture" class="profile-image">
+        </div>
+        <button mat-stroked-button class="upload-btn" (click)="onUploadPhoto()">
+          Upload Photo
+        </button>
+        <p class="upload-hint">JPG, GIF or PNG. Max size of 800K</p>
+      </div>
+
+      <!-- Right Side: Forms Section -->
+      <div class="forms-section">
+        <!-- Personal Information Section -->
+        <div class="section-group">
+          <h3>Personal Information</h3>
+          <form [formGroup]="profileForm">
+            <div class="form-row">
+              <div class="form-field-group">
+                <label>Full Name</label>
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="fullName" placeholder="Alex Morgan">
+                </mat-form-field>
+              </div>
+              <div class="form-field-group">
+                <label>Email Address</label>
+                <mat-form-field appearance="outline">
+                  <input matInput formControlName="email" placeholder="alex.morgan@example.com">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-row full-width">
+              <div class="form-field-group">
+                <label>Role</label>
+                <mat-form-field appearance="outline" class="disabled-field">
+                  <input matInput formControlName="role">
+                </mat-form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Change Password Section -->
+        <div class="section-group">
+          <h3>Change Password</h3>
+          <form [formGroup]="passwordForm">
+            <div class="form-row full-width">
+              <div class="form-field-group">
+                <label>Current Password</label>
+                <mat-form-field appearance="outline">
+                  <input matInput type="password" formControlName="currentPassword">
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field-group">
+                <label>New Password</label>
+                <mat-form-field appearance="outline">
+                  <input matInput type="password" formControlName="newPassword">
+                </mat-form-field>
+              </div>
+              <div class="form-field-group">
+                <label>Confirm Password</label>
+                <mat-form-field appearance="outline">
+                  <input matInput type="password" formControlName="confirmPassword">
+                </mat-form-field>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="actions-row">
+          <button mat-flat-button color="primary" class="update-profile-btn" (click)="onUpdateProfile()">
+            Update Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-layout>

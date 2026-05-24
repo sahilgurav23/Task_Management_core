@@ -1,0 +1,162 @@
+.profile-settings-container {
+  padding: 24px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 64px);
+}
+
+.header-section h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  color: #111827;
+}
+
+.header-section p {
+  margin: 4px 0 24px;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+.profile-content-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Left Side: Avatar Section */
+.avatar-section {
+  width: 300px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+}
+
+.avatar-container {
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-btn {
+  width: 100%;
+  max-width: 200px;
+  height: 40px;
+  font-weight: 600;
+  border-color: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+.upload-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* Right Side: Forms Section */
+.forms-section {
+  flex: 1;
+  padding: 32px 40px;
+}
+
+.section-group h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 24px;
+  color: #111827;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.form-field-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.full-width .form-field-group {
+  flex: 1;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+.disabled-field {
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+.divider {
+  height: 1px;
+  background-color: #f3f4f6;
+  margin: 32px 0;
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+}
+
+.update-profile-btn {
+  background-color: #2563eb !important;
+  height: 44px;
+  padding: 0 24px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .profile-content-card {
+    flex-direction: column;
+  }
+  
+  .avatar-section {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
+
+@media (max-width: 600px) {
+  .forms-section {
+    padding: 24px 16px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .update-profile-btn {
+    width: 100%;
+  }
+}
