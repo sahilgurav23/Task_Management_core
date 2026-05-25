@@ -7,16 +7,16 @@ namespace Business.Services.Implementations
 {
     public class LoginService : ILoginService
     {
-        private readonly ILoginRepository _loginRepository;
+        private readonly ILoginRepository loginRepository;
 
         public LoginService(ILoginRepository loginRepository)
         {
-            _loginRepository = loginRepository;
+            this.loginRepository = loginRepository;
         }
 
         public async Task<LoginResponseDto> ValidateLoginAsync(LoginRequestDto request)
         {
-            var profile = await _loginRepository.GetProfileByCredentialsAsync(request.Email, request.Password);
+            var profile = await loginRepository.GetProfileByCredentialsAsync(request.Email, request.Password);
 
             if (profile == null)
             {

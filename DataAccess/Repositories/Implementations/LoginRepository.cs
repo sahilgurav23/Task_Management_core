@@ -16,11 +16,7 @@ namespace DataAccess.Repositories.Implementations
 
         public async Task<Profile?> GetProfileByCredentialsAsync(string email, string password)
         {
-            return await _context.Profiles
-                .AsNoTracking()
-                .FirstOrDefaultAsync(profile =>
-                    profile.EmailAddress == email &&
-                    profile.Password == password);
+            return await _context.Profiles.AsNoTracking().FirstOrDefaultAsync(profile => profile.EmailAddress == email && profile.Password == password);
         }
     }
 }

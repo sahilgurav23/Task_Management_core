@@ -23,6 +23,7 @@
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Administrator\" />
     <Folder Include="Controllers\User\" />
+    <Folder Include="wwwroot\uploads\profile\" />
   </ItemGroup>
 
   <ItemGroup>

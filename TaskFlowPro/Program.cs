@@ -47,6 +47,9 @@ app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 
+// Without this images cannot be accessed publicly.
+app.UseStaticFiles();
+
 app.MapControllers();
 
 app.Run();

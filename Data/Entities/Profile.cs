@@ -7,19 +7,20 @@ namespace Data.Entities
     /// </summary>
     public class Profile
     {
-        [Required]
         public Guid Id { get; set; }
 
-        [Required]
         public string FullName { get; set; } = string.Empty;
 
-        [Required]
         public string EmailAddress { get; set; } = string.Empty;
 
-        [Required]
         public string Password { get; set; } = string.Empty;
 
-        [Required]
-        public int Role {  get; set; } 
+        public int Role { get; set; }
+
+        public string? ProfileImagePath { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
+        public DateTime? UpdatedOn { get; set; }
     }
 }
