@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Business.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Webp; // WebP is highly optimized for mobile
+using SixLabors.ImageSharp.Processing;
 using System.IO;
 
 namespace Business.Services.Helpers
 {
-    public class ImageHelper
+    public class ImageHelper : IImageHelper
     {
         private const int TargetWidth = 1080;
         private const int TargetHeight = 1920;

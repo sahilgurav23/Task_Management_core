@@ -11,6 +11,7 @@
         <div class="avatar-container">
           <img [src]="profileImageUrl" alt="Profile Picture" class="profile-image">
         </div>
+        <input type="file" id="fileInput" (change)="onFileSelected($event)" style="display: none;" accept="image/*">
         <button mat-stroked-button class="upload-btn" (click)="onUploadPhoto()">
           Upload Photo
         </button>

@@ -8,6 +8,9 @@ export class ApiConfig {
       // Auth endpoints
       login: `${this.baseUrl}/api/Login/validate`,
       
+      // Profile endpoints
+      profile: `${this.baseUrl}/api/ProfileControllercs`,
+      
       // Add more endpoints here as needed
       // user: `${this.baseUrl}/api/User`,
       // admin: `${this.baseUrl}/api/Admin`,

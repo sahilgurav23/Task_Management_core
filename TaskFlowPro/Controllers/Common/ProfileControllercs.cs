@@ -1,4 +1,4 @@
-﻿using Business.Services.Implementations;
+using Business.Services.Implementations;
 using Business.Services.Interfaces;
 using DTOs.Common;
 using DTOs.Requests;
@@ -26,6 +26,7 @@ namespace TaskFlowPro.Controllers.Common
         /// <summary>
         /// Retrieves the profile details of the currently authenticated user.
         /// </summary>
+        [HttpGet("me")]
         [ProducesResponseType(typeof(ApiResponseDto<ProfileDetailsResponseDto>), 200)]
         [ProducesResponseType(typeof(ApiResponseDto<ProfileDetailsResponseDto>), 404)]
         public async Task<IActionResult> GetMyProfile()
@@ -71,10 +72,20 @@ namespace TaskFlowPro.Controllers.Common
         }
 
         /// <summary>
-        /// Extracts the user ID from the JWT claims.
+        /// Extracts the user ID from the custom header or JWT claims.
         /// </summary>
         private Guid GetCurrentUserId()
         {
+            // First try to get from custom header sent by UI
+            if (Request.Headers.TryGetValue("X-User-Guid", out var headerUserId))
+            {
+                if (Guid.TryParse(headerUserId, out Guid guidFromHeader))
+                {
+                    return guidFromHeader;
+                }
+            }
+
+            // Fallback to JWT claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (Guid.TryParse(userIdClaim, out Guid userId))
             {

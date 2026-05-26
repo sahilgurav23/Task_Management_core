@@ -1,4 +1,4 @@
-﻿using Business.Services.Helpers;
+using Business.Services.Helpers;
 using Business.Services.Interfaces;
 using Data.Entities;
 using DataAccess.Repositories.Interfaces;
@@ -11,12 +11,12 @@ namespace Business.Services.Implementations
     public class ProfileService : IProfileService
     {
         private readonly IProfileRepository profileRepository;
-        private readonly ImageHelper imageHelper;
+        private readonly IImageHelper imageHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProfileService"/>.
         /// </summary>
-        public ProfileService(IProfileRepository profileRepository, ImageHelper image)
+        public ProfileService(IProfileRepository profileRepository, IImageHelper image)
         {
             this.profileRepository = profileRepository;
             imageHelper = image;

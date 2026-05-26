@@ -58,3 +58,6 @@ Thumbs.db
 !TaskFlowPro/appsettings.Development.json
 # Ignore potential production secrets
 # TaskFlowPro/appsettings.Production.json
+
+# Ignore profile images
+TaskFlowPro/wwwroot/uploads/profiles/

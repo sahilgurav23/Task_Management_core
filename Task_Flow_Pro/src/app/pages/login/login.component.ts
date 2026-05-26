@@ -106,7 +106,7 @@ export class LoginComponent {
 
         // Store user data in localStorage
         localStorage.setItem('user', JSON.stringify({
-          id: response.id,
+          id: response.profileId,
           fullName: response.fullName,
           emailAddress: response.emailAddress,
           role: response.role
