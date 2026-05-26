@@ -34,5 +34,21 @@ namespace DataAccess.Repositories.Implementations
             await context.SaveChangesAsync();
         }
 
+        /// <summary>
+        /// Compiles a direct SQL projection query selecting only the target columns. 
+        /// This avoids loading the whole entity into EF Core's change tracker, maximizing API speed.
+        /// </summary>
+        public async Task<(string FullName, string? ProfileImagePath)?> GetNavigationDataById(Guid id)
+        {
+            var data = await context.Profiles
+                .AsNoTracking()
+                .Where(p => p.Id == id)
+                .Select(p => new { p.FullName, p.ProfileImagePath })
+                .FirstOrDefaultAsync();
+
+            if (data == null) return null;
+
+            return (data.FullName, data.ProfileImagePath);
+        }
     }
 }

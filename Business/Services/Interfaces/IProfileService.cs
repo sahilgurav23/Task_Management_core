@@ -19,5 +19,10 @@ namespace Business.Services.Interfaces
         /// Updates the user's profile, including optional password changes and image uploads.
         /// </summary>
         Task<ApiResponseDto<ProfileDetailsResponseDto>> UpdateProfileAsync(Guid userId, UpdateProfileRequestDto request, string baseUrl);
+
+        /// <summary>
+        /// Coordinates light profile gathering logic for structural presentation elements.
+        /// </summary>
+        Task<ApiResponseDto<NavigationProfileResponseDto>> GetNavigationProfileAsync(Guid userId, string baseUrl);
     }
 }

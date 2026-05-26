@@ -17,6 +17,11 @@ export interface ApiResponse<T> {
   errors: string[];
 }
 
+export interface NavigationProfile {
+  fullName: string;
+  profileImageUrl: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,6 +32,10 @@ export class ProfileService {
 
   getProfile(): Observable<ApiResponse<ProfileDetails>> {
     return this.http.get<ApiResponse<ProfileDetails>>(`${this.apiUrl}/me`);
+  }
+
+  getNavigationDetails(): Observable<ApiResponse<NavigationProfile>> {
+    return this.http.get<ApiResponse<NavigationProfile>>(`${this.apiUrl}/nav-details`);
   }
 
   updateProfile(formData: FormData): Observable<ApiResponse<ProfileDetails>> {

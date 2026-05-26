@@ -28,15 +28,15 @@
     <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile-btn">
       <div class="user-info">
         <div class="avatar-wrapper">
-          <img src="https://ui-avatars.com/api/?name=Ajay+N&background=0D8ABC&color=fff" alt="User Avatar" class="user-avatar">
+          <img [src]="navProfile?.profileImageUrl || 'https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff'" alt="User Avatar" class="user-avatar">
         </div>
-        <span class="user-name">Ajay N.</span>
+        <span class="user-name">{{ navProfile?.fullName || 'User' }}</span>
         <mat-icon class="dropdown-icon">expand_more</mat-icon>
       </div>
     </button>
 
     <mat-menu #userMenu="matMenu" xPosition="before">
-      <button mat-menu-item>
+      <button mat-menu-item routerLink="/profile">
         <mat-icon>person</mat-icon>
         <span>My Profile</span>
       </button>
@@ -45,7 +45,7 @@
         <span>Settings</span>
       </button>
       <mat-divider></mat-divider>
-      <button mat-menu-item>
+      <button mat-menu-item (click)="onLogout()">
         <mat-icon>logout</mat-icon>
         <span>Sign Out</span>
       </button>

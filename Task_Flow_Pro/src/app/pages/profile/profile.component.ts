@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { ProfileService } from '../../services/profile.service';
 import { RoleEnum } from '../../enums/role.enum';
+import { ProfileSyncService } from '../../services/profile-sync.service';
 
 @Component({
   selector: 'app-profile',
@@ -31,11 +32,12 @@ import { RoleEnum } from '../../enums/role.enum';
 export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private profileService = inject(ProfileService);
+  private profileSyncService = inject(ProfileSyncService);
   private snackBar = inject(MatSnackBar);
 
   profileForm: FormGroup;
   passwordForm: FormGroup;
-  profileImageUrl: string = 'https://i.pravatar.cc/150?u=alex-morgan';
+  profileImageUrl: string = '';
   selectedFile: File | null = null;
 
   constructor() {
@@ -72,7 +74,11 @@ export class ProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.snackBar.open('Failed to load profile details', 'Close', { duration: 3000 });
+        this.snackBar.open('Failed to load profile details', 'Close', { 
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center'
+        });
       }
     });
   }
@@ -122,17 +128,30 @@ export class ProfileComponent implements OnInit {
     this.profileService.updateProfile(formData).subscribe({
       next: (response) => {
         if (response.success) {
-          this.snackBar.open('Profile updated successfully', 'Close', { duration: 3000 });
+          this.snackBar.open('Profile updated successfully', 'Close', { 
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
           this.passwordForm.reset();
           this.selectedFile = null;
           this.loadProfile(); // Re-fetch data to sync UI
+          this.profileSyncService.notifyProfileUpdate(); // Notify Top Navigation to refresh
         } else {
-          this.snackBar.open(response.message || 'Update failed', 'Close', { duration: 3000 });
+          this.snackBar.open(response.message || 'Update failed', 'Close', { 
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
         }
       },
       error: (err) => {
         const errorMsg = err.error?.message || 'An error occurred while updating profile';
-        this.snackBar.open(errorMsg, 'Close', { duration: 3000 });
+        this.snackBar.open(errorMsg, 'Close', { 
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center'
+        });
       }
     });
   }

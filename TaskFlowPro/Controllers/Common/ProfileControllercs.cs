@@ -71,6 +71,46 @@ namespace TaskFlowPro.Controllers.Common
             return Ok(response); // Returns 200
         }
 
+
+        /// <summary>
+        /// Fetches high-performance minified profile data strictly for header/top navigation layouts.
+        /// </summary>
+        /// <returns>
+        /// Returns 200 OK containing name and optimized image URL link context.
+        /// Returns 401 Unauthorized if access token signature verification is missing or corrupted.
+        /// Returns 404 Not Found if authenticated claim matches no database profile record.
+        /// </returns>
+        [HttpGet("nav-details")]
+        [ProducesResponseType(typeof(ApiResponseDto<NavigationProfileResponseDto>), 200)]
+        [ProducesResponseType(typeof(ApiResponseDto<NavigationProfileResponseDto>), 401)]
+        [ProducesResponseType(typeof(ApiResponseDto<NavigationProfileResponseDto>), 404)]
+        public async Task<IActionResult> GetNavigationDetails()
+        {
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
+                return Unauthorized(CreateNavigationErrorResponse("Token identity missing validation context."));
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+            var response = await profileService.GetNavigationProfileAsync(userId, baseUrl);
+
+            if (!response.Success)
+                return NotFound(response);
+
+            return Ok(response);
+        }
+
+        private ApiResponseDto<NavigationProfileResponseDto> CreateNavigationErrorResponse(string message)
+        {
+            return new ApiResponseDto<NavigationProfileResponseDto>
+            {
+                Success = false,
+                Message = message,
+                Errors = new List<string> { "Authentication failed context validation." }
+            };
+        }
+
+
         /// <summary>
         /// Extracts the user ID from the custom header or JWT claims.
         /// </summary>

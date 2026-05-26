@@ -1,6 +1,7 @@
 using Business.Services.Helpers;
 using Business.Services.Interfaces;
 using Data.Entities;
+using DataAccess.Repositories.Implementations;
 using DataAccess.Repositories.Interfaces;
 using DTOs.Common;
 using DTOs.Requests;
@@ -99,6 +100,38 @@ namespace Business.Services.Implementations
             };
         }
 
+        /// <summary>
+        /// Executes lightning-fast read operations utilizing lean DB tuples, avoiding large object allocations.
+        /// </summary>
+        public async Task<ApiResponseDto<NavigationProfileResponseDto>> GetNavigationProfileAsync(Guid userId, string baseUrl)
+        {
+            var rawData = await profileRepository.GetNavigationDataById(userId);
+
+            if (rawData == null)
+            {
+                return new ApiResponseDto<NavigationProfileResponseDto>
+                {
+                    Success = false,
+                    Message = "Navigation profile retrieval failed.",
+                    Errors = new List<string> { "Target profile identity does not exist." }
+                };
+            }
+
+            var result = new NavigationProfileResponseDto
+            {
+                FullName = rawData.Value.FullName,
+                ProfileImageUrl = string.IsNullOrEmpty(rawData.Value.ProfileImagePath)
+                                  ? null
+                                  : $"{baseUrl}/{rawData.Value.ProfileImagePath.TrimStart('/')}"
+            };
+
+            return new ApiResponseDto<NavigationProfileResponseDto>
+            {
+                Success = true,
+                Message = "Navigation profile fetched successfully.",
+                Data = result
+            };
+        }
 
         /// <summary>
         /// Private helper to map the Profile entity to the ProfileDetailsResponseDto.
