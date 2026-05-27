@@ -24,5 +24,10 @@ namespace Business.Services.Interfaces
         /// Coordinates light profile gathering logic for structural presentation elements.
         /// </summary>
         Task<ApiResponseDto<NavigationProfileResponseDto>> GetNavigationProfileAsync(Guid userId, string baseUrl);
+
+        /// <summary>
+        /// Processes the dropdown request, formats image paths, and returns paginated context.
+        /// </summary>
+        Task<ApiResponseDto<PaginatedResponseDto<UserDropdownResponseDto>>> GetAssigneeDropdown(PaginationRequestDto request, string baseUrl);
     }
 }

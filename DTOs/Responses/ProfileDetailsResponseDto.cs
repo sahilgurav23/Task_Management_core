@@ -1,4 +1,4 @@
-﻿namespace DTOs.Responses
+namespace DTOs.Responses
 {
     /// <summary>
     /// Profile details response.

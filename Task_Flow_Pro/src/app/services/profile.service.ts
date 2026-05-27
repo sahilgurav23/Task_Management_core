@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiConfig } from '../config/api.config';
 
@@ -36,6 +36,13 @@ export class ProfileService {
 
   getNavigationDetails(): Observable<ApiResponse<NavigationProfile>> {
     return this.http.get<ApiResponse<NavigationProfile>>(`${this.apiUrl}/nav-details`);
+  }
+
+  getAssigneeDropdown(pageNumber: number = 1, pageSize: number = 10): Observable<ApiResponse<any>> {
+    let params = new HttpParams()
+      .set('PageNumber', pageNumber.toString())
+      .set('PageSize', pageSize.toString());
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/assignee-dropdown`, { params });
   }
 
   updateProfile(formData: FormData): Observable<ApiResponse<ProfileDetails>> {

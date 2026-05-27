@@ -11,6 +11,9 @@ export class ApiConfig {
       // Profile endpoints
       profile: `${this.baseUrl}/api/ProfileControllercs`,
       
+      // Task endpoints
+      task: `${this.baseUrl}/api/Task`,
+      
       // Add more endpoints here as needed
       // user: `${this.baseUrl}/api/User`,
       // admin: `${this.baseUrl}/api/Admin`,

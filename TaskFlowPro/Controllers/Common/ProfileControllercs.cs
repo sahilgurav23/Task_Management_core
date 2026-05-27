@@ -100,6 +100,28 @@ namespace TaskFlowPro.Controllers.Common
             return Ok(response);
         }
 
+
+        /// <summary>
+        /// Fetches a paginated, searchable list of users for task assignment dropdowns.
+        /// </summary>
+        /// <returns>200 OK with paginated list.</returns>
+        [HttpGet("assignee-dropdown")]
+        [ProducesResponseType(typeof(ApiResponseDto<PaginatedResponseDto<UserDropdownResponseDto>>), 200)]
+        public async Task<IActionResult> GetAssigneeDropdown([FromQuery] PaginationRequestDto request)
+        {
+            // Ensure minimum defaults are respected if client sends 0 or negatives
+            if (request.PageNumber < 1) request.PageNumber = 1;
+            if (request.PageSize < 1) request.PageSize = 10;
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+            var response = await profileService.GetAssigneeDropdown(request, baseUrl);
+
+            return Ok(response);
+        }
+
+
+
         private ApiResponseDto<NavigationProfileResponseDto> CreateNavigationErrorResponse(string message)
         {
             return new ApiResponseDto<NavigationProfileResponseDto>

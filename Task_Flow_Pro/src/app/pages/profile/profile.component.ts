@@ -43,7 +43,7 @@ export class ProfileComponent implements OnInit {
   constructor() {
     this.profileForm = this.fb.group({
       fullName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
       role: [{ value: '', disabled: true }]
     });
 

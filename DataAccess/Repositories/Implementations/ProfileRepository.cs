@@ -50,5 +50,32 @@ namespace DataAccess.Repositories.Implementations
 
             return (data.FullName, data.ProfileImagePath);
         }
+
+        /// <summary>
+        /// Retrieves a paginated and optionally filtered list of users for assignment dropdowns.
+        /// </summary>
+        public async Task<(IEnumerable<Profile> Users, int TotalCount)> GetUsersForDropdown(string? searchTerm, int pageNumber, int pageSize)
+        {
+            var query = context.Profiles.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+                query = query.Where(p => p.FullName.Contains(searchTerm));
+
+            int totalCount = await query.CountAsync();
+
+            var users = await query
+                .OrderBy(p => p.FullName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new Profile
+                {
+                    Id = p.Id,
+                    FullName = p.FullName,
+                    ProfileImagePath = p.ProfileImagePath
+                })
+                .ToListAsync();
+
+            return (users, totalCount);
+        }
     }
 }

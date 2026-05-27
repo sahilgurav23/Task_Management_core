@@ -99,6 +99,19 @@
   height: 18px;
 }
 
+.user-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-option-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .form-row {

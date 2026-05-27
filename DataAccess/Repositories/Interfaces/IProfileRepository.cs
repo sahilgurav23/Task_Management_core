@@ -22,5 +22,10 @@ namespace DataAccess.Repositories.Interfaces
         /// optimized for light payload extraction.
         /// </summary>
         Task<(string FullName, string? ProfileImagePath)?> GetNavigationDataById(Guid id);
+
+        /// <summary>
+        /// Retrieves a paginated and optionally filtered list of users for assignment dropdowns.
+        /// </summary>
+        Task<(IEnumerable<Profile> Users, int TotalCount)> GetUsersForDropdown(string? searchTerm, int pageNumber, int pageSize);
     }
 }

@@ -28,16 +28,16 @@
         <div class="form-field-group">
           <label>Priority</label>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="priority">
-              <mat-option *ngFor="let p of priorities" [value]="p">{{p}}</mat-option>
+            <mat-select formControlName="priorityId">
+              <mat-option *ngFor="let p of priorities" [value]="p.id">{{p.label}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div class="form-field-group">
           <label>Status</label>
           <mat-form-field appearance="outline">
-            <mat-select formControlName="status">
-              <mat-option *ngFor="let s of statuses" [value]="s">{{s}}</mat-option>
+            <mat-select formControlName="statusId">
+              <mat-option *ngFor="let s of statuses" [value]="s.id">{{s.label}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -48,9 +48,23 @@
         <div class="form-field-group">
           <label>Assign User</label>
           <mat-form-field appearance="outline">
-            <mat-icon matPrefix class="user-prefix-icon">person_outline</mat-icon>
-            <mat-select formControlName="assignee">
-              <mat-option *ngFor="let user of users" [value]="user.name">{{user.name}}</mat-option>
+            <mat-icon matPrefix class="user-prefix-icon" *ngIf="!taskForm.get('assigneeId')?.value">person_outline</mat-icon>
+            
+            <mat-select formControlName="assigneeId">
+              <!-- Custom Trigger to show image after selection -->
+              <mat-select-trigger>
+                <div class="user-option" *ngIf="taskForm.get('assigneeId')?.value">
+                  <img [src]="getSelectedUserImage()" class="user-option-img" *ngIf="getSelectedUserImage()">
+                  <span>{{getSelectedUserName()}}</span>
+                </div>
+              </mat-select-trigger>
+
+              <mat-option *ngFor="let user of users" [value]="user.id">
+                <div class="user-option">
+                  <img *ngIf="user.profileImageUrl" [src]="user.profileImageUrl" class="user-option-img">
+                  <span>{{user.fullName}}</span>
+                </div>
+              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>

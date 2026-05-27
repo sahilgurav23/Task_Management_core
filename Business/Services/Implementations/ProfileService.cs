@@ -133,6 +133,37 @@ namespace Business.Services.Implementations
             };
         }
 
+
+        /// <summary>
+        /// Processes the dropdown request, formats image paths, and returns paginated context.
+        /// </summary>
+        public async Task<ApiResponseDto<PaginatedResponseDto<UserDropdownResponseDto>>> GetAssigneeDropdown(PaginationRequestDto request, string baseUrl)
+        {
+            var (users, totalCount) = await profileRepository.GetUsersForDropdown(request.SearchTerm, request.PageNumber, request.PageSize);
+
+            var mappedUsers = users.Select(u => new UserDropdownResponseDto
+            {
+                Id = u.Id,
+                FullName = u.FullName,
+                ProfileImageUrl = string.IsNullOrEmpty(u.ProfileImagePath) ? null : $"{baseUrl}/{u.ProfileImagePath.TrimStart('/')}"
+            });
+
+            var paginationData = new PaginatedResponseDto<UserDropdownResponseDto>
+            {
+                Items = mappedUsers,
+                TotalCount = totalCount,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize
+            };
+
+            return new ApiResponseDto<PaginatedResponseDto<UserDropdownResponseDto>>
+            {
+                Success = true,
+                Message = "Dropdown data fetched successfully.",
+                Data = paginationData
+            };
+        }
+
         /// <summary>
         /// Private helper to map the Profile entity to the ProfileDetailsResponseDto.
         /// </summary>

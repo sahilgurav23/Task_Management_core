@@ -8,13 +8,27 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database connection
+// ==========================================
+// 1. DATABASE CONFIGURATION
+// ==========================================
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// ==========================================
+// 2. DEPENDENCY INJECTION (Layer Connections)
+// ==========================================
+// Data Access Layer (Repositories)
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
+
+// Business Layer (Services)
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
+
+//// Helpers (Infrastructure/Utilities)
 builder.Services.AddScoped<IImageHelper, ImageHelper>();
+
 
 // Add services to the container.
 
