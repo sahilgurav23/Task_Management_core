@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.component';
 import { TaskService, TaskListItem } from '../../services/task.service';
@@ -34,6 +35,7 @@ export class TasksManagementComponent implements OnInit {
   protected readonly Math = Math;
   private dialog = inject(MatDialog);
   private taskService = inject(TaskService);
+  private router = inject(Router);
 
   displayedColumns: string[] = ['name', 'priority', 'assignee', 'dueDate', 'actions'];
   
@@ -110,5 +112,9 @@ export class TasksManagementComponent implements OnInit {
 
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase()}`;
+  }
+
+  viewTaskDetails(taskId: string) {
+    this.router.navigate(['/tasks', taskId]);
   }
 }
