@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -10,16 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.component';
-
-interface Task {
-  id: number;
-  name: string;
-  department: string;
-  priority: 'High' | 'Medium' | 'Low' | 'Critical';
-  assignee: { name: string; avatar: string; initials?: string };
-  dueDate: string;
-  status: 'Active' | 'Completed';
-}
+import { TaskService, TaskListItem } from '../../services/task.service';
 
 @Component({
   selector: 'app-tasks-management',
@@ -39,59 +30,57 @@ interface Task {
   templateUrl: './tasks-management.component.html',
   styleUrl: './tasks-management.component.css'
 })
-export class TasksManagementComponent {
+export class TasksManagementComponent implements OnInit {
+  protected readonly Math = Math;
   private dialog = inject(MatDialog);
+  private taskService = inject(TaskService);
+
   displayedColumns: string[] = ['name', 'priority', 'assignee', 'dueDate', 'actions'];
   
-  tasks: Task[] = [
-    {
-      id: 1,
-      name: 'Review Q3 Financials',
-      department: 'Finance Department',
-      priority: 'High',
-      assignee: { name: 'Sarah J.', avatar: 'https://i.pravatar.cc/150?u=sarah' },
-      dueDate: 'Oct 15, 2023',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      name: 'Update Security Protocols',
-      department: 'IT Infrastructure',
-      priority: 'Critical',
-      assignee: { name: 'Marcus T.', avatar: 'https://i.pravatar.cc/150?u=marcus' },
-      dueDate: 'Oct 18, 2023',
-      status: 'Completed'
-    },
-    {
-      id: 3,
-      name: 'Onboard New Hires',
-      department: 'Human Resources',
-      priority: 'Medium',
-      assignee: { name: 'Jane D.', avatar: 'https://i.pravatar.cc/150?u=jane' },
-      dueDate: 'Oct 20, 2023',
-      status: 'Active'
-    },
-    {
-      id: 4,
-      name: 'Prepare Board Presentation',
-      department: 'Executive Team',
-      priority: 'High',
-      assignee: { name: 'Alex W.', avatar: 'https://i.pravatar.cc/150?u=alex' },
-      dueDate: 'Oct 25, 2023',
-      status: 'Active'
-    },
-    {
-      id: 5,
-      name: 'Quarterly Team Outing Planning',
-      department: 'Culture Committee',
-      priority: 'Low',
-      assignee: { name: 'Emily R.', avatar: 'https://i.pravatar.cc/150?u=emily' },
-      dueDate: 'Nov 02, 2023',
-      status: 'Active'
-    }
-  ];
+  tasks: TaskListItem[] = [];
+  filteredTasks: TaskListItem[] = [];
+  totalCount = 0;
+  pageSize = 10;
+  pageNumber = 1;
+  currentStatusId?: number;
 
-  filteredTasks: Task[] = [...this.tasks];
+  ngOnInit() {
+    this.loadTasks();
+  }
+
+  loadTasks() {
+    this.taskService.getTaskList(this.pageNumber, this.pageSize, '', this.currentStatusId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.tasks = response.data.items;
+          this.filteredTasks = [...this.tasks];
+          this.totalCount = response.data.totalCount;
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load tasks', err);
+      }
+    });
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const pages = [];
+    for (let i = 1; i <= this.totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  onPageChange(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.pageNumber = page;
+      this.loadTasks();
+    }
+  }
 
   openAddTaskDialog() {
     const dialogRef = this.dialog.open(CreateEditTaskComponent, {
@@ -102,8 +91,7 @@ export class TasksManagementComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('The dialog was closed', result);
-        // Handle new task addition here if needed
+        this.loadTasks(); // Refresh list after successful creation
       }
     });
   }
@@ -111,12 +99,13 @@ export class TasksManagementComponent {
   onTabChange(event: any) {
     const label = event.tab.textLabel;
     if (label === 'All Tasks') {
-      this.filteredTasks = [...this.tasks];
+      this.currentStatusId = undefined;
     } else if (label === 'Active') {
-      this.filteredTasks = this.tasks.filter(t => t.status === 'Active');
+      this.currentStatusId = 1; // Mapping to 'To Do' or similar active state
     } else if (label === 'Completed') {
-      this.filteredTasks = this.tasks.filter(t => t.status === 'Completed');
+      this.currentStatusId = 4; // Mapping to 'Done'
     }
+    this.loadTasks();
   }
 
   getPriorityClass(priority: string): string {

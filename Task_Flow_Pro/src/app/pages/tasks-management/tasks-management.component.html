@@ -28,13 +28,13 @@
             <th mat-header-cell *matHeaderCellDef> Task Name </th>
             <td mat-cell *matCellDef="let task">
               <div class="task-name-cell">
-                <div class="status-icon" [class.completed]="task.status === 'Completed'">
-                  <mat-icon *ngIf="task.status === 'Completed'">check_circle</mat-icon>
-                  <div *ngIf="task.status !== 'Completed'" class="circle-outline"></div>
+                <div class="status-icon" [class.completed]="currentStatusId === 4">
+                  <mat-icon *ngIf="currentStatusId === 4">check_circle</mat-icon>
+                  <div *ngIf="currentStatusId !== 4" class="circle-outline"></div>
                 </div>
                 <div class="task-info">
-                  <div class="task-title" [class.strikethrough]="task.status === 'Completed'">{{task.name}}</div>
-                  <div class="task-dept" [class.strikethrough]="task.status === 'Completed'">{{task.department}}</div>
+                  <div class="task-title" [class.strikethrough]="currentStatusId === 4">{{task.title}}</div>
+                  <div class="task-dept" [class.strikethrough]="currentStatusId === 4">{{task.department || 'General'}}</div>
                 </div>
               </div>
             </td>
@@ -55,13 +55,10 @@
             <th mat-header-cell *matHeaderCellDef> Assignee </th>
             <td mat-cell *matCellDef="let task">
               <div class="assignee-cell">
-                <div class="avatar" *ngIf="task.assignee.avatar; else initialsTpl">
-                  <img [src]="task.assignee.avatar" [alt]="task.assignee.name">
+                <div class="avatar">
+                  <img [src]="task.assigneeImageUrl || 'https://ui-avatars.com/api/?name=' + task.assigneeName" [alt]="task.assigneeName">
                 </div>
-                <ng-template #initialsTpl>
-                  <div class="avatar initials">{{task.assignee.initials}}</div>
-                </ng-template>
-                <span class="assignee-name">{{task.assignee.name}}</span>
+                <span class="assignee-name">{{task.assigneeName}}</span>
               </div>
             </td>
           </ng-container>
@@ -69,7 +66,7 @@
           <!-- Due Date Column -->
           <ng-container matColumnDef="dueDate">
             <th mat-header-cell *matHeaderCellDef> Due Date </th>
-            <td mat-cell *matCellDef="let task"> {{task.dueDate}} </td>
+            <td mat-cell *matCellDef="let task"> {{task.dueDate | date:'mediumDate'}} </td>
           </ng-container>
 
           <!-- Actions Column -->
@@ -88,13 +85,35 @@
       </div>
 
       <div class="table-footer">
-        <span class="showing-text">Showing 1 to {{filteredTasks.length}} of {{tasks.length}} tasks</span>
+        <span class="showing-text">
+          Showing {{ (pageNumber - 1) * pageSize + 1 }} to {{ Math.min(pageNumber * pageSize, totalCount) }} of {{ totalCount }} tasks
+        </span>
         <div class="pagination">
-          <button mat-icon-button disabled><mat-icon>chevron_left</mat-icon></button>
-          <button mat-mini-fab color="primary" class="page-num">1</button>
-          <button mat-button class="page-num">2</button>
-          <button mat-button class="page-num">3</button>
-          <button mat-icon-button><mat-icon>chevron_right</mat-icon></button>
+          <button mat-icon-button [disabled]="pageNumber === 1" (click)="onPageChange(pageNumber - 1)">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          
+          <ng-container *ngFor="let page of pageNumbers">
+            <button 
+              *ngIf="page === pageNumber"
+              mat-flat-button 
+              color="primary"
+              (click)="onPageChange(page)"
+              class="page-num">
+              {{ page }}
+            </button>
+            <button 
+              *ngIf="page !== pageNumber"
+              mat-button 
+              (click)="onPageChange(page)"
+              class="page-num">
+              {{ page }}
+            </button>
+          </ng-container>
+
+          <button mat-icon-button [disabled]="pageNumber === totalPages" (click)="onPageChange(pageNumber + 1)">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
         </div>
       </div>
     </div>

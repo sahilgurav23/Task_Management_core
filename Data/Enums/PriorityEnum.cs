@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents the urgency level of a task.
     /// </summary>
-    public enum Priority
+    public enum PriorityEnum
     {
         Low = 1,
         Medium = 2,

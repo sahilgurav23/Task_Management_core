@@ -1,6 +1,7 @@
 using Business.Services.Interfaces;
 using DTOs.Common;
 using DTOs.Requests;
+using DTOs.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -57,14 +58,36 @@ namespace TaskFlowPro.Controllers.Common
             if (Request.Headers.TryGetValue("X-User-Guid", out var headerUserId))
             {
                 if (Guid.TryParse(headerUserId, out Guid guidFromHeader))
-                {
                     return guidFromHeader;
-                }
             }
 
             // Fallback to JWT claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return Guid.TryParse(userIdClaim, out Guid userId) ? userId : Guid.Empty;
+        }
+
+        /// <summary>
+        /// Fetches a paginated, searchable, and filtered list of tasks for the data table.
+        /// </summary>
+        /// <param name="filter">The query string parameters for filtering and pagination.</param>
+        /// <returns>A 200 OK containing the paginated data table results.</returns>
+        [HttpGet("list")]
+        [ProducesResponseType(typeof(ApiResponseDto<PaginatedResponseDto<TaskListResponseDto>>), 200)]
+        public async Task<IActionResult> GetTaskList([FromQuery] TaskFilterRequestDto filter)
+        {
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
+                return Unauthorized(new ApiResponseDto<object>
+                {
+                    Success = false,
+                    Message = "Invalid user token."
+                });
+
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+            var response = await taskService.GetTaskList(userId, filter, baseUrl);
+
+            return Ok(response);
         }
     }
 }
