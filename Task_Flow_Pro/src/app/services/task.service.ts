@@ -34,7 +34,8 @@ export interface TaskListItem {
   assigneeName: string;
   assigneeImageUrl: string;
   dueDate: string;
-  status?: string;
+  status: string;
+  statusId: number;
   department?: string;
 }
 
@@ -110,5 +111,9 @@ export class TaskService {
 
   updateTask(taskId: string, request: UpdateTaskRequest): Observable<ApiResponse<boolean>> {
     return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${taskId}`, request);
+  }
+
+  markTaskAsDone(taskId: string): Observable<ApiResponse<boolean>> {
+    return this.http.patch<ApiResponse<boolean>>(`${this.apiUrl}/${taskId}/mark-done`, {});
   }
 }

@@ -38,5 +38,10 @@ namespace Business.Services.Interfaces
         /// Securely processes a task update, silently discarding fields the user is not authorized to change.
         /// </summary>
         Task<ApiResponseDto<bool>> UpdateTask(Guid taskId, UpdateTaskRequestDto request, Guid currentUserId);
+
+        /// <summary>
+        /// Securely validates permissions and updates a task's status to Done.
+        /// </summary>
+        Task<ApiResponseDto<bool>> MarkTaskAsDone(Guid taskId, Guid currentUserId);
     }
 }

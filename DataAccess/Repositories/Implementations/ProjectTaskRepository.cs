@@ -55,7 +55,9 @@ namespace DataAccess.Repositories.Implementations
                     Priority = ((PriorityEnum)x.pt.PriorityId).ToString(),
                     AssigneeName = x.p.FullName,
                     AssigneeImageUrl = x.p.ProfileImagePath,
-                    DueDate = x.pt.DueDate
+                    DueDate = x.pt.DueDate,
+                    StatusId = x.pt.StatusId,
+                    Status = ((StatusEnum)x.pt.StatusId).ToString()
                 })
                 .ToListAsync();
 
@@ -117,6 +119,37 @@ namespace DataAccess.Repositories.Implementations
         {
             context.ProjectTasks.Update(task);
             await context.ActivityLogs.AddAsync(log);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<(Guid CreatedById, Guid AssignedUserId, int StatusId)?> GetTaskSecurityContext(Guid taskId)
+        {
+            var contexts = await context.ProjectTasks
+                .AsNoTracking()
+                .Where(t => t.Id == taskId)
+                .Select(t => new { t.CreatedById, t.AssignedUserId, t.StatusId })
+                .FirstOrDefaultAsync();
+
+            if (contexts == null) return null;
+
+            return (contexts.CreatedById, contexts.AssignedUserId, contexts.StatusId);
+        }
+
+        public async Task UpdateTaskStatusWithLog(Guid taskId, int newStatusId, ActivityLog log)
+        {
+            var stubTask = new ProjectTask
+            {
+                Id = taskId,
+                StatusId = newStatusId,
+                UpdatedOn = DateTime.UtcNow
+            };
+
+            context.ProjectTasks.Attach(stubTask);
+            context.Entry(stubTask).Property(t => t.StatusId).IsModified = true;
+            context.Entry(stubTask).Property(t => t.UpdatedOn).IsModified = true;
+
+            await context.ActivityLogs.AddAsync(log);
+
             await context.SaveChangesAsync();
         }
     }

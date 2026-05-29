@@ -169,5 +169,32 @@ namespace TaskFlowPro.Controllers.Common
 
             return Ok(response);
         }
+
+        /// <summary>
+        /// Instantly marks a task as Done (StatusId = 4).
+        /// Requires the requesting user to be the creator or the assignee of the task.
+        /// </summary>
+        /// <param name="id">The unique identifier of the task.</param>
+        /// <returns>A 200 OK on success, or 403 Forbidden if unauthorized.</returns>
+        [HttpPatch("{id:guid}/mark-done")]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 200)]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 403)]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 404)]
+        public async Task<IActionResult> MarkTaskAsDone(Guid id)
+        {
+            var userId = GetCurrentUserId();
+
+            var response = await taskService.MarkTaskAsDone(id, userId);
+
+            if (!response.Success)
+            {
+                if (response.Message.Contains("Forbidden"))
+                    return StatusCode(403, response);
+
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

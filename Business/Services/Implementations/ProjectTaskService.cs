@@ -226,5 +226,53 @@ namespace Business.Services.Implementations
                 Data = true
             };
         }
+
+        public async Task<ApiResponseDto<bool>> MarkTaskAsDone(Guid taskId, Guid currentUserId)
+        {
+            var securityContext = await taskRepository.GetTaskSecurityContext(taskId);
+        
+            if (securityContext == null)
+                return new ApiResponseDto<bool> { Success = false, Message = "Task not found." };
+        
+            bool isCreator = securityContext.Value.CreatedById == currentUserId;
+            bool isAssignee = securityContext.Value.AssignedUserId == currentUserId;
+        
+            if (!isCreator && !isAssignee)
+            {
+                return new ApiResponseDto<bool>
+                {
+                    Success = false,
+                    Message = "Forbidden: You are not authorized to complete this task."
+                };
+            }
+        
+            if (securityContext.Value.StatusId == (int)StatusEnum.Done)
+            {
+                return new ApiResponseDto<bool>
+                {
+                    Success = true,
+                    Message = "Task is already marked as Done.",
+                    Data = true
+                };
+            }
+        
+            var log = new ActivityLog
+            {
+                Id = Guid.NewGuid(),
+                TaskId = taskId,
+                Description = "Marked task as Done.",
+                CreatedByUserId = currentUserId,
+                CreatedOn = DateTime.UtcNow
+            };
+        
+            await taskRepository.UpdateTaskStatusWithLog(taskId, (int)StatusEnum.Done, log);
+        
+            return new ApiResponseDto<bool>
+            {
+                Success = true,
+                Message = "Task successfully marked as Done.",
+                Data = true
+            };
+        }
     }
-}
+    }

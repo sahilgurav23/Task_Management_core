@@ -28,13 +28,13 @@
             <th mat-header-cell *matHeaderCellDef> Task Name </th>
             <td mat-cell *matCellDef="let task">
               <div class="task-name-cell">
-                <div class="status-icon" [class.completed]="currentStatusId === 4">
-                  <mat-icon *ngIf="currentStatusId === 4">check_circle</mat-icon>
-                  <div *ngIf="currentStatusId !== 4" class="circle-outline"></div>
+                <div class="status-icon" [class.completed]="task.status === 'Done'">
+                  <mat-icon *ngIf="task.status === 'Done'">check_circle</mat-icon>
+                  <div *ngIf="task.status !== 'Done'" class="circle-outline"></div>
                 </div>
                 <div class="task-info">
-                  <div class="task-title" [class.strikethrough]="currentStatusId === 4">{{task.title}}</div>
-                  <div class="task-dept" [class.strikethrough]="currentStatusId === 4">{{task.department || 'General'}}</div>
+                  <div class="task-title" [class.strikethrough]="task.status === 'Done'">{{task.title}}</div>
+                  <div class="task-dept" [class.strikethrough]="task.status === 'Done'">{{task.department || 'General'}}</div>
                 </div>
               </div>
             </td>

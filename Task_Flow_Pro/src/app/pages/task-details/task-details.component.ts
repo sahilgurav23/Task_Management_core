@@ -8,6 +8,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { TaskService, TaskDetails, TaskActivity } from '../../services/task.service';
 import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.component';
@@ -25,6 +26,7 @@ import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.co
     MatDividerModule,
     MatProgressSpinnerModule,
     MatDialogModule,
+    MatSnackBarModule,
     LayoutComponent
   ],
   templateUrl: './task-details.component.html',
@@ -34,6 +36,7 @@ export class TaskDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
   private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
   router = inject(Router);
   taskId: string | null = null;
   loading = true;
@@ -139,6 +142,38 @@ export class TaskDetailsComponent implements OnInit {
       if (result) {
         // Refresh task details after successful edit
         this.loadTaskData();
+      }
+    });
+  }
+
+  onCompleteTask() {
+    if (!this.taskId) return;
+
+    this.taskService.markTaskAsDone(this.taskId).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.snackBar.open('Task marked as Done successfully', 'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
+          // Refresh task details after successful completion
+          this.loadTaskData();
+        } else {
+          this.snackBar.open(response.message || 'Failed to complete task', 'Close', {
+            duration: 3000,
+            verticalPosition: 'top',
+            horizontalPosition: 'center'
+          });
+        }
+      },
+      error: (err) => {
+        const errorMsg = err.error?.message || 'An error occurred while completing the task';
+        this.snackBar.open(errorMsg, 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center'
+        });
       }
     });
   }

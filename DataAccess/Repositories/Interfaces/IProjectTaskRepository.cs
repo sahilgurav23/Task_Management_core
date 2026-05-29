@@ -40,5 +40,15 @@ namespace DataAccess.Repositories.Interfaces
         /// Updates an existing task and inserts an activity log in a single transaction.
         /// </summary>
         Task UpdateWithLog(ProjectTask task, ActivityLog log);
+
+        /// <summary>
+        /// Fetches only the IDs required to verify access permissions for a task, minimizing memory allocation.
+        /// </summary>
+        Task<(Guid CreatedById, Guid AssignedUserId, int StatusId)?> GetTaskSecurityContext(Guid taskId);
+
+        /// <summary>
+        /// Executes a lightning-fast partial SQL update for the status, and inserts an activity log.
+        /// </summary>
+        Task UpdateTaskStatusWithLog(Guid taskId, int newStatusId, ActivityLog log);
     }
 }

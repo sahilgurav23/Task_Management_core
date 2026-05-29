@@ -39,5 +39,15 @@
         /// The date the task must be completed by.
         /// </summary>
         public DateTime DueDate { get; set; }
+
+        /// <summary>
+        /// The numeric ID of the status.
+        /// </summary>
+        public int StatusId { get; set; }
+
+        /// <summary>
+        /// The string representation of the Status (e.g., "To Do", "In Progress", "Done").
+        /// </summary>
+        public string Status { get; set; } = string.Empty;
     }
 }

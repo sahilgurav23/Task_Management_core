@@ -27,7 +27,7 @@
             <mat-icon>edit</mat-icon>
             Edit
           </button>
-          <button mat-flat-button color="primary" class="complete-btn" [disabled]="!canEditDetails">
+          <button mat-flat-button color="primary" class="complete-btn" [disabled]="!canEditDetails" (click)="onCompleteTask()">
             <mat-icon>check_circle</mat-icon>
             Complete Task
           </button>
