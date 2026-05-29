@@ -60,5 +60,21 @@ namespace DataAccess.Repositories.Implementations
 
             return (tasks, totalCount);
         }
+
+        /// <summary>
+        /// Adds both the task and the log to the DbContext and commits them together.
+        /// This is highly optimized as EF Core will batch the INSERT statements into a single database roundtrip.
+        /// </summary>
+        public async Task<Guid> CreateWithLog(ProjectTask task, ActivityLog log)
+        {
+            // Add both entities to the change tracker
+            await context.ProjectTasks.AddAsync(task);
+            await context.ActivityLogs.AddAsync(log);
+
+            // Execute a single save operation for both inserts
+            await context.SaveChangesAsync();
+
+            return task.Id;
+        }
     }
 }

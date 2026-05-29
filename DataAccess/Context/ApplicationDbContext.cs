@@ -12,6 +12,7 @@ namespace DataAccess.Context
         }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<ProjectTask> ProjectTasks { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

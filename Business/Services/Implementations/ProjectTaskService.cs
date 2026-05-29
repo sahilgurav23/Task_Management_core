@@ -18,12 +18,14 @@ namespace Business.Services.Implementations
 
         public async Task<ApiResponseDto<Guid>> CreateTask(CreateTaskRequestDto request, Guid currentUserId)
         {
-            // Business Rule: Strip time from DueDate to strictly store date only
             var sanitizedDueDate = request.DueDate.Date;
+
+            var taskId = Guid.NewGuid();
+            var currentTime = DateTime.UtcNow;
 
             var newTask = new ProjectTask
             {
-                Id = Guid.NewGuid(),
+                Id = taskId,
                 Title = request.Title,
                 Description = request.Description,
                 PriorityId = request.PriorityId,
@@ -31,10 +33,19 @@ namespace Business.Services.Implementations
                 AssignedUserId = request.AssigneeId,
                 DueDate = sanitizedDueDate,
                 CreatedById = currentUserId,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = currentTime
             };
 
-            var taskId = await taskRepository.Create(newTask);
+            var initialLog = new ActivityLog
+            {
+                Id = Guid.NewGuid(),
+                TaskId = taskId,
+                Description = "Created Task",
+                CreatedByUserId = currentUserId,
+                CreatedOn = currentTime
+            };
+
+            await taskRepository.CreateWithLog(newTask, initialLog);
 
             return new ApiResponseDto<Guid>
             {
@@ -43,7 +54,6 @@ namespace Business.Services.Implementations
                 Data = taskId
             };
         }
-
         /// <summary>
         /// Processes task table data, applying base URLs to images and structuring the pagination response.
         /// </summary>
