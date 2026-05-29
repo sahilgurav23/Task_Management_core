@@ -12,6 +12,7 @@
         public string Priority { get; set; } = string.Empty;
         public int StatusId { get; set; }
         public string Status { get; set; } = string.Empty;
+        public Guid AssigneeId { get; set; }
         public string AssigneeName { get; set; } = string.Empty;
         public string? AssigneeImageUrl { get; set; }
         public DateTime DueDate { get; set; }

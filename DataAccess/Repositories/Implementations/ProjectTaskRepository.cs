@@ -97,10 +97,27 @@ namespace DataAccess.Repositories.Implementations
                               Priority = ((PriorityEnum)pt.PriorityId).ToString(),
                               StatusId = pt.StatusId,
                               Status = ((StatusEnum)pt.StatusId).ToString(),
+                              AssigneeId = p.Id,
                               AssigneeName = p.FullName,
                               AssigneeImageUrl = p.ProfileImagePath,
                               DueDate = pt.DueDate
                           }).FirstOrDefaultAsync();
+        }
+
+        public async Task<ProjectTask?> GetById(Guid taskId)
+        {
+            // We do NOT use AsNoTracking() here because we intend to update this entity.
+            return await context.ProjectTasks.FirstOrDefaultAsync(t => t.Id == taskId);
+        }
+
+        /// <summary>
+        /// Optimized transaction to commit an update and a new log simultaneously.
+        /// </summary>
+        public async Task UpdateWithLog(ProjectTask task, ActivityLog log)
+        {
+            context.ProjectTasks.Update(task);
+            await context.ActivityLogs.AddAsync(log);
+            await context.SaveChangesAsync();
         }
     }
 }

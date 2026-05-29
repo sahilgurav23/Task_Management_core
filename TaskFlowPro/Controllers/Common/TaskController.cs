@@ -124,5 +124,50 @@ namespace TaskFlowPro.Controllers.Common
 
             return Ok(response);
         }
+
+
+        /// <summary>
+        /// Retrieves the task details along with abstract boolean permissions to configure the UI Edit form safely.
+        /// </summary>
+        [HttpGet("{id:guid}/edit-context")]
+        [ProducesResponseType(typeof(ApiResponseDto<TaskEditContextResponseDto>), 200)]
+        [ProducesResponseType(typeof(ApiResponseDto<TaskEditContextResponseDto>), 404)]
+        public async Task<IActionResult> GetTaskEditContext(Guid id)
+        {
+            var userId = GetCurrentUserId();
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+            var response = await taskService.GetTaskEditContext(id, userId, baseUrl);
+
+            if (!response.Success)
+                return NotFound(response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Updates a task. Securely ignores fields the current user is not authorized to edit.
+        /// </summary>
+        [HttpPut("{id:guid}")]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 200)]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 403)]
+        [ProducesResponseType(typeof(ApiResponseDto<bool>), 404)]
+        public async Task<IActionResult> UpdateTask(Guid id, [FromBody] UpdateTaskRequestDto request)
+        {
+            var userId = GetCurrentUserId();
+
+            var response = await taskService.UpdateTask(id, request, userId);
+
+            if (!response.Success)
+            {
+                // Return 403 Forbidden if the business layer rejected due to permissions
+                if (response.Message.Contains("Forbidden"))
+                    return StatusCode(403, response);
+
+                return NotFound(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

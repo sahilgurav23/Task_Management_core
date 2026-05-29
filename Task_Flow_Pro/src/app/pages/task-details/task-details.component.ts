@@ -1,14 +1,16 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { TaskService, TaskDetails, TaskActivity } from '../../services/task.service';
+import { CreateEditTaskComponent } from '../create-edit-task/create-edit-task.component';
 
 @Component({
   selector: 'app-task-details',
@@ -22,6 +24,7 @@ import { TaskService, TaskDetails, TaskActivity } from '../../services/task.serv
     MatChipsModule,
     MatDividerModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
     LayoutComponent
   ],
   templateUrl: './task-details.component.html',
@@ -30,12 +33,15 @@ import { TaskService, TaskDetails, TaskActivity } from '../../services/task.serv
 export class TaskDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private taskService = inject(TaskService);
+  private dialog = inject(MatDialog);
+  router = inject(Router);
   taskId: string | null = null;
   loading = true;
   error: string | null = null;
 
   task: TaskDetails | null = null;
   activities: TaskActivity[] = [];
+  canEditDetails = true;
 
   ngOnInit() {
     this.taskId = this.route.snapshot.paramMap.get('id');
@@ -75,11 +81,26 @@ export class TaskDetailsComponent implements OnInit {
         if (response.success && response.data) {
           this.activities = response.data;
         }
-        this.loading = false;
+        this.loadEditContext();
       },
       error: (err) => {
         console.error('Failed to load task activities', err);
         this.activities = [];
+        this.loadEditContext();
+      }
+    });
+  }
+
+  loadEditContext() {
+    this.taskService.getTaskEditContext(this.taskId!).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.canEditDetails = response.data.canEditDetails;
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load edit context', err);
         this.loading = false;
       }
     });
@@ -96,12 +117,29 @@ export class TaskDetailsComponent implements OnInit {
 
   formatDateTime(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
+    });
+  }
+
+  onEditTask() {
+    if (!this.taskId) return;
+
+    const dialogRef = this.dialog.open(CreateEditTaskComponent, {
+      width: '800px',
+      maxWidth: '95vw',
+      data: { taskId: this.taskId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Refresh task details after successful edit
+        this.loadTaskData();
+      }
     });
   }
 }

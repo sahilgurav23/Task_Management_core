@@ -19,11 +19,15 @@
       <div class="details-header">
         <h1>Task Details</h1>
         <div class="header-actions">
-          <button mat-stroked-button class="edit-btn">
+          <button mat-stroked-button class="back-btn" (click)="router.navigate(['/tasks'])">
+            <mat-icon>arrow_back</mat-icon>
+            Back
+          </button>
+          <button mat-stroked-button class="edit-btn" (click)="onEditTask()">
             <mat-icon>edit</mat-icon>
             Edit
           </button>
-          <button mat-flat-button color="primary" class="complete-btn">
+          <button mat-flat-button color="primary" class="complete-btn" [disabled]="!canEditDetails">
             <mat-icon>check_circle</mat-icon>
             Complete Task
           </button>

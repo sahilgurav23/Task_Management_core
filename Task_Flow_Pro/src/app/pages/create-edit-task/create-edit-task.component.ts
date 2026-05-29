@@ -10,8 +10,9 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProfileService } from '../../services/profile.service';
-import { TaskService, CreateTaskRequest } from '../../services/task.service';
+import { TaskService, CreateTaskRequest, UpdateTaskRequest } from '../../services/task.service';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +29,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     MatNativeDateModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './create-edit-task.component.html',
   styleUrl: './create-edit-task.component.css'
@@ -42,6 +44,10 @@ export class CreateEditTaskComponent implements OnInit {
   taskForm: FormGroup;
   userSearchControl = new FormControl('');
   isEditMode = false;
+  taskId: string | null = null;
+  canEditDetails = true;
+  canEditStatus = true;
+  loading = false;
 
   priorities = [
     { id: 1, label: 'Low' },
@@ -73,7 +79,7 @@ export class CreateEditTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAssignees();
-    
+
     // Setup search with debounce
     this.userSearchControl.valueChanges.pipe(
       debounceTime(300),
@@ -82,9 +88,73 @@ export class CreateEditTaskComponent implements OnInit {
       this.loadAssignees(searchTerm || '');
     });
 
-    if (this.data && this.data.task) {
+    if (this.data && this.data.taskId) {
       this.isEditMode = true;
-      this.taskForm.patchValue(this.data.task);
+      this.taskId = this.data.taskId;
+      this.loadTaskEditContext();
+    }
+  }
+
+  loadTaskEditContext() {
+    if (!this.taskId) return;
+
+    this.loading = true;
+    this.taskService.getTaskEditContext(this.taskId).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const context = response.data;
+          this.canEditDetails = context.canEditDetails;
+          this.canEditStatus = context.canEditStatus;
+
+          // Patch form with task details
+          const taskDetails = context.taskDetails;
+          this.taskForm.patchValue({
+            title: taskDetails.title,
+            description: taskDetails.description,
+            priorityId: taskDetails.priorityId,
+            statusId: taskDetails.statusId,
+            assigneeId: taskDetails.assigneeId,
+            dueDate: new Date(taskDetails.dueDate)
+          });
+
+          // Apply field disable/enable based on permissions
+          this.applyFieldPermissions();
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load task edit context', err);
+        this.snackBar.open('Failed to load task details', 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          horizontalPosition: 'center'
+        });
+        this.loading = false;
+      }
+    });
+  }
+
+  applyFieldPermissions() {
+    if (this.isEditMode) {
+      // Disable fields based on permissions
+      const titleControl = this.taskForm.get('title');
+      const descriptionControl = this.taskForm.get('description');
+      const priorityIdControl = this.taskForm.get('priorityId');
+      const assigneeIdControl = this.taskForm.get('assigneeId');
+      const dueDateControl = this.taskForm.get('dueDate');
+      const statusIdControl = this.taskForm.get('statusId');
+
+      if (!this.canEditDetails) {
+        titleControl?.disable();
+        descriptionControl?.disable();
+        priorityIdControl?.disable();
+        assigneeIdControl?.disable();
+        dueDateControl?.disable();
+      }
+
+      if (!this.canEditStatus) {
+        statusIdControl?.disable();
+      }
     }
   }
 
@@ -119,37 +189,90 @@ export class CreateEditTaskComponent implements OnInit {
 
   onSave(): void {
     if (this.taskForm.valid) {
-      const taskData: CreateTaskRequest = {
-        ...this.taskForm.value,
-        dueDate: new Date(this.taskForm.value.dueDate).toISOString()
-      };
+      if (this.isEditMode && this.taskId) {
+        // Update existing task
+        const updateData: UpdateTaskRequest = {
+          title: this.taskForm.value.title,
+          description: this.taskForm.value.description,
+          priorityId: this.taskForm.value.priorityId,
+          statusId: this.taskForm.value.statusId,
+          assignedUserId: this.taskForm.value.assigneeId,
+          dueDate: new Date(this.taskForm.value.dueDate).toISOString()
+        };
 
-      this.taskService.createTask(taskData).subscribe({
-        next: (response) => {
-          if (response.success) {
-            this.snackBar.open('Task created successfully', 'Close', {
-              duration: 3000,
-              verticalPosition: 'top',
-              horizontalPosition: 'center'
-            });
-            this.dialogRef.close(true);
-          } else {
-            this.snackBar.open(response.message || 'Failed to create task', 'Close', {
+        // Only include fields that are editable based on permissions
+        if (!this.canEditDetails) {
+          delete updateData.title;
+          delete updateData.description;
+          delete updateData.priorityId;
+          delete updateData.assignedUserId;
+          delete updateData.dueDate;
+        }
+
+        if (!this.canEditStatus) {
+          delete updateData.statusId;
+        }
+
+        this.taskService.updateTask(this.taskId, updateData).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.snackBar.open('Task updated successfully', 'Close', {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center'
+              });
+              this.dialogRef.close(true);
+            } else {
+              this.snackBar.open(response.message || 'Failed to update task', 'Close', {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center'
+              });
+            }
+          },
+          error: (err) => {
+            const errorMsg = err.error?.message || 'An error occurred while updating the task';
+            this.snackBar.open(errorMsg, 'Close', {
               duration: 3000,
               verticalPosition: 'top',
               horizontalPosition: 'center'
             });
           }
-        },
-        error: (err) => {
-          const errorMsg = err.error?.message || 'An error occurred while creating the task';
-          this.snackBar.open(errorMsg, 'Close', {
-            duration: 3000,
-            verticalPosition: 'top',
-            horizontalPosition: 'center'
-          });
-        }
-      });
+        });
+      } else {
+        // Create new task
+        const taskData: CreateTaskRequest = {
+          ...this.taskForm.value,
+          dueDate: new Date(this.taskForm.value.dueDate).toISOString()
+        };
+
+        this.taskService.createTask(taskData).subscribe({
+          next: (response) => {
+            if (response.success) {
+              this.snackBar.open('Task created successfully', 'Close', {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center'
+              });
+              this.dialogRef.close(true);
+            } else {
+              this.snackBar.open(response.message || 'Failed to create task', 'Close', {
+                duration: 3000,
+                verticalPosition: 'top',
+                horizontalPosition: 'center'
+              });
+            }
+          },
+          error: (err) => {
+            const errorMsg = err.error?.message || 'An error occurred while creating the task';
+            this.snackBar.open(errorMsg, 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              horizontalPosition: 'center'
+            });
+          }
+        });
+      }
     }
   }
 }

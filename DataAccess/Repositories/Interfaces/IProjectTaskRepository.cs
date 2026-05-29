@@ -30,5 +30,15 @@ namespace DataAccess.Repositories.Interfaces
         /// Retrieves highly optimized task details joined with the assignee's profile.
         /// </summary>
         Task<TaskDetailsResponseDto?> GetTaskDetails(Guid taskId);
+
+        /// <summary>
+        /// Fetches a raw task entity by its ID for tracking and updating.
+        /// </summary>
+        Task<Data.Entities.ProjectTask?> GetById(Guid taskId);
+
+        /// <summary>
+        /// Updates an existing task and inserts an activity log in a single transaction.
+        /// </summary>
+        Task UpdateWithLog(ProjectTask task, ActivityLog log);
     }
 }

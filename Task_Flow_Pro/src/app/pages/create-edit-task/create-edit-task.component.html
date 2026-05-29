@@ -1,7 +1,11 @@
 <div class="dialog-container">
+  <div *ngIf="loading" class="loading-overlay">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
   <div class="dialog-header">
     <h2 mat-dialog-title>{{ isEditMode ? 'Edit Task' : 'Create New Task' }}</h2>
-    <p class="subtitle">Fill in the details below to assign a new task within the workspace.</p>
+    <p class="subtitle">{{ isEditMode ? 'Update the task details below. Some fields may be disabled based on your permissions.' : 'Fill in the details below to assign a new task within the workspace.' }}</p>
   </div>
 
   <form [formGroup]="taskForm" (ngSubmit)="onSave()" class="task-form">
@@ -49,7 +53,7 @@
           <label>Assign User</label>
           <mat-form-field appearance="outline">
             <mat-icon matPrefix class="user-prefix-icon" *ngIf="!taskForm.get('assigneeId')?.value">person_outline</mat-icon>
-            
+
             <mat-select formControlName="assigneeId">
               <!-- Custom Search Box inside mat-select -->
               <div class="select-search-container">
@@ -89,9 +93,9 @@
 
     <div mat-dialog-actions class="dialog-actions">
       <button mat-button type="button" (click)="onCancel()" class="cancel-btn">Cancel</button>
-      <button mat-flat-button color="primary" type="submit" [disabled]="taskForm.invalid" class="save-btn">
+      <button mat-flat-button color="primary" type="submit" [disabled]="taskForm.invalid || loading" class="save-btn">
         <mat-icon>save</mat-icon>
-        Save Task
+        {{ isEditMode ? 'Update Task' : 'Save Task' }}
       </button>
     </div>
   </form>

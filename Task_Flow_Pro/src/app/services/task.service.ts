@@ -46,6 +46,7 @@ export interface TaskDetails {
   priority: string;
   statusId: number;
   status: string;
+  assigneeId: string;
   assigneeName: string;
   assigneeImageUrl?: string;
   dueDate: string;
@@ -55,6 +56,21 @@ export interface TaskActivity {
   description: string;
   createdOn: string;
   createdByName: string;
+}
+
+export interface TaskEditContext {
+  taskDetails: TaskDetails;
+  canEditDetails: boolean;
+  canEditStatus: boolean;
+}
+
+export interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  priorityId?: number;
+  assignedUserId?: string;
+  dueDate?: string;
+  statusId?: number;
 }
 
 @Injectable({
@@ -86,5 +102,13 @@ export class TaskService {
 
   getTaskActivities(taskId: string): Observable<ApiResponse<TaskActivity[]>> {
     return this.http.get<ApiResponse<TaskActivity[]>>(`${this.apiUrl}/${taskId}/activities`);
+  }
+
+  getTaskEditContext(taskId: string): Observable<ApiResponse<TaskEditContext>> {
+    return this.http.get<ApiResponse<TaskEditContext>>(`${this.apiUrl}/${taskId}/edit-context`);
+  }
+
+  updateTask(taskId: string, request: UpdateTaskRequest): Observable<ApiResponse<boolean>> {
+    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${taskId}`, request);
   }
 }

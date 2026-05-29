@@ -28,5 +28,15 @@ namespace Business.Services.Interfaces
         /// Retrieves the activity log history for a specific task.
         /// </summary>
         Task<ApiResponseDto<IEnumerable<TaskActivityResponseDto>>> GetTaskActivities(Guid taskId);
+
+        /// <summary>
+        /// Retrieves the task details along with UI permissions for the requesting user.
+        /// </summary>
+        Task<ApiResponseDto<TaskEditContextResponseDto>> GetTaskEditContext(Guid taskId, Guid currentUserId, string baseUrl);
+
+        /// <summary>
+        /// Securely processes a task update, silently discarding fields the user is not authorized to change.
+        /// </summary>
+        Task<ApiResponseDto<bool>> UpdateTask(Guid taskId, UpdateTaskRequestDto request, Guid currentUserId);
     }
 }

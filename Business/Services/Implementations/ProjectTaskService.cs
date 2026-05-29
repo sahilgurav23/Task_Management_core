@@ -1,5 +1,6 @@
 using Business.Services.Interfaces;
 using Data.Entities;
+using Data.Enums;
 using DataAccess.Repositories.Implementations;
 using DataAccess.Repositories.Interfaces;
 using DTOs.Common;
@@ -134,6 +135,95 @@ namespace Business.Services.Implementations
                 Success = true,
                 Message = "Task activities fetched successfully.",
                 Data = activities
+            };
+        }
+
+        public async Task<ApiResponseDto<TaskEditContextResponseDto>> GetTaskEditContext(Guid taskId, Guid currentUserId, string baseUrl)
+        {
+            var rawTask = await taskRepository.GetById(taskId);
+
+            if (rawTask == null)
+                return new ApiResponseDto<TaskEditContextResponseDto> { Success = false, Message = "Task not found." };
+
+            var detailsResponse = await GetTaskDetails(taskId, baseUrl);
+
+            bool isCreator = rawTask.CreatedById == currentUserId;
+            bool isAssignee = rawTask.AssignedUserId == currentUserId;
+
+            return new ApiResponseDto<TaskEditContextResponseDto>
+            {
+                Success = true,
+                Message = "Edit context retrieved.",
+                Data = new TaskEditContextResponseDto
+                {
+                    TaskDetails = detailsResponse.Data!,
+                    CanEditDetails = isCreator,
+                    CanEditStatus = isCreator || isAssignee
+                }
+            };
+        }
+
+        public async Task<ApiResponseDto<bool>> UpdateTask(Guid taskId, UpdateTaskRequestDto request, Guid currentUserId)
+        {
+            var task = await taskRepository.GetById(taskId);
+
+            if (task == null)
+                return new ApiResponseDto<bool> { Success = false, Message = "Task not found." };
+
+            bool isCreator = task.CreatedById == currentUserId;
+            bool isAssignee = task.AssignedUserId == currentUserId;
+
+            if (!isCreator && !isAssignee)
+            {
+                return new ApiResponseDto<bool>
+                {
+                    Success = false,
+                    Message = "Forbidden: You do not have permission to edit this task."
+                };
+            }
+
+            string logDescription = "";
+
+            if (isCreator)
+            {
+                if (!string.IsNullOrWhiteSpace(request.Title)) task.Title = request.Title;
+                if (!string.IsNullOrWhiteSpace(request.Description)) task.Description = request.Description;
+                if (request.PriorityId.HasValue) task.PriorityId = request.PriorityId.Value;
+                if (request.DueDate.HasValue) task.DueDate = request.DueDate.Value.Date;
+                if (request.AssignedUserId.HasValue) task.AssignedUserId = request.AssignedUserId.Value;
+                if (request.StatusId.HasValue) task.StatusId = request.StatusId.Value;
+
+                logDescription = "Updated task details.";
+            }
+            else if (isAssignee)
+            {
+                if (request.StatusId.HasValue && task.StatusId != request.StatusId.Value)
+                {
+                    task.StatusId = request.StatusId.Value;
+                    logDescription = $"Updated task status to {((StatusEnum)task.StatusId).ToString()}.";
+                }
+                else
+                    return new ApiResponseDto<bool> { Success = true, Message = "No authorized changes detected.", Data = true };
+            }
+
+            task.UpdatedOn = DateTime.UtcNow;
+
+            var log = new ActivityLog
+            {
+                Id = Guid.NewGuid(),
+                TaskId = task.Id,
+                Description = logDescription,
+                CreatedByUserId = currentUserId,
+                CreatedOn = DateTime.UtcNow
+            };
+
+            await taskRepository.UpdateWithLog(task, log);
+
+            return new ApiResponseDto<bool>
+            {
+                Success = true,
+                Message = "Task updated successfully.",
+                Data = true
             };
         }
     }
