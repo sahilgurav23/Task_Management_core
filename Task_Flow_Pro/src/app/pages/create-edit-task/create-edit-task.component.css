@@ -112,6 +112,30 @@
   object-fit: cover;
 }
 
+/* Select Search Box Styling */
+.select-search-container {
+  padding: 8px 16px;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 100;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.search-field {
+  width: 100%;
+}
+
+::ng-deep .search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+::ng-deep .search-field .mat-mdc-text-field-wrapper {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background-color: #f9fafb !important;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .form-row {

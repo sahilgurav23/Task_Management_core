@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProfileService } from '../../services/profile.service';
 import { TaskService, CreateTaskRequest } from '../../services/task.service';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-edit-task',
@@ -39,6 +40,7 @@ export class CreateEditTaskComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
 
   taskForm: FormGroup;
+  userSearchControl = new FormControl('');
   isEditMode = false;
 
   priorities = [
@@ -71,14 +73,23 @@ export class CreateEditTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadAssignees();
+    
+    // Setup search with debounce
+    this.userSearchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchTerm => {
+      this.loadAssignees(searchTerm || '');
+    });
+
     if (this.data && this.data.task) {
       this.isEditMode = true;
       this.taskForm.patchValue(this.data.task);
     }
   }
 
-  loadAssignees() {
-    this.profileService.getAssigneeDropdown().subscribe({
+  loadAssignees(searchTerm: string = '') {
+    this.profileService.getAssigneeDropdown(1, 100, searchTerm).subscribe({
       next: (response) => {
         if (response.success) {
           this.users = response.data.items;

@@ -51,6 +51,14 @@
             <mat-icon matPrefix class="user-prefix-icon" *ngIf="!taskForm.get('assigneeId')?.value">person_outline</mat-icon>
             
             <mat-select formControlName="assigneeId">
+              <!-- Custom Search Box inside mat-select -->
+              <div class="select-search-container">
+                <mat-form-field appearance="fill" class="search-field">
+                  <mat-icon matPrefix>search</mat-icon>
+                  <input matInput [formControl]="userSearchControl" placeholder="Search user..." (keydown)="$event.stopPropagation()">
+                </mat-form-field>
+              </div>
+
               <!-- Custom Trigger to show image after selection -->
               <mat-select-trigger>
                 <div class="user-option" *ngIf="taskForm.get('assigneeId')?.value">

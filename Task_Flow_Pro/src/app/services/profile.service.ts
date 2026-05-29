@@ -38,10 +38,15 @@ export class ProfileService {
     return this.http.get<ApiResponse<NavigationProfile>>(`${this.apiUrl}/nav-details`);
   }
 
-  getAssigneeDropdown(pageNumber: number = 1, pageSize: number = 10): Observable<ApiResponse<any>> {
+  getAssigneeDropdown(pageNumber: number = 1, pageSize: number = 10, searchTerm: string = ''): Observable<ApiResponse<any>> {
     let params = new HttpParams()
       .set('PageNumber', pageNumber.toString())
       .set('PageSize', pageSize.toString());
+    
+    if (searchTerm) {
+      params = params.set('SearchTerm', searchTerm);
+    }
+    
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/assignee-dropdown`, { params });
   }
 
