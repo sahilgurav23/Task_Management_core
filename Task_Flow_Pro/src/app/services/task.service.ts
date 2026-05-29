@@ -38,6 +38,25 @@ export interface TaskListItem {
   department?: string;
 }
 
+export interface TaskDetails {
+  taskId: string;
+  title: string;
+  description: string;
+  priorityId: number;
+  priority: string;
+  statusId: number;
+  status: string;
+  assigneeName: string;
+  assigneeImageUrl?: string;
+  dueDate: string;
+}
+
+export interface TaskActivity {
+  description: string;
+  createdOn: string;
+  createdByName: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -59,5 +78,13 @@ export class TaskService {
 
   createTask(task: CreateTaskRequest): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(this.apiUrl, task);
+  }
+
+  getTaskDetails(taskId: string): Observable<ApiResponse<TaskDetails>> {
+    return this.http.get<ApiResponse<TaskDetails>>(`${this.apiUrl}/${taskId}/details`);
+  }
+
+  getTaskActivities(taskId: string): Observable<ApiResponse<TaskActivity[]>> {
+    return this.http.get<ApiResponse<TaskActivity[]>>(`${this.apiUrl}/${taskId}/activities`);
   }
 }

@@ -6,7 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LayoutComponent } from '../../shared/components/layout/layout.component';
+import { TaskService, TaskDetails, TaskActivity } from '../../services/task.service';
 
 @Component({
   selector: 'app-task-details',
@@ -19,6 +21,7 @@ import { LayoutComponent } from '../../shared/components/layout/layout.component
     MatCardModule,
     MatChipsModule,
     MatDividerModule,
+    MatProgressSpinnerModule,
     LayoutComponent
   ],
   templateUrl: './task-details.component.html',
@@ -26,36 +29,79 @@ import { LayoutComponent } from '../../shared/components/layout/layout.component
 })
 export class TaskDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private taskService = inject(TaskService);
   taskId: string | null = null;
+  loading = true;
+  error: string | null = null;
 
-  task = {
-    title: 'Refactor Clean Architecture layers',
-    description: `The current implementation of the domain logic has become tightly coupled with the infrastructure layer, violating the dependency rule of Clean Architecture. This task involves decoupling these layers to ensure the core business rules are independent of frameworks, UI, and databases.
-    
-    Key objectives include:
-    • Implementing the Repository pattern interfaces strictly within the Domain layer.
-    • Moving concrete repository implementations to the Infrastructure layer.
-    • Ensuring Use Cases (Interactors) only depend on Domain entities and Repository interfaces.
-    • Writing unit tests for Use Cases mocking the repository interfaces to verify isolation.
-    
-    This refactor is critical before we scale the new reporting module, as the current coupling makes testing incredibly difficult and slows down feature velocity.`,
-    status: 'In Progress',
-    priority: 'High',
-    project: 'Backend V2',
-    dueDate: 'Oct 25, 2023',
-    assignee: {
-      name: 'Ajay N.',
-      avatar: 'https://ui-avatars.com/api/?name=Ajay+N&background=0D8ABC&color=fff'
-    },
-    activities: [
-      { type: 'priority', message: 'Priority updated to High', date: 'Oct 22, 09:15 AM', user: 'Ajay N.' },
-      { type: 'status', message: 'Status changed to In Progress', date: 'Oct 21, 14:30 PM', user: 'Ajay N.' },
-      { type: 'create', message: 'Created task', date: 'Oct 20, 10:00 AM', user: 'Ajay N.' }
-    ]
-  };
+  task: TaskDetails | null = null;
+  activities: TaskActivity[] = [];
 
   ngOnInit() {
     this.taskId = this.route.snapshot.paramMap.get('id');
-    // In a real app, fetch task by ID here
+    if (this.taskId) {
+      this.loadTaskData();
+    } else {
+      this.error = 'Task ID not found';
+      this.loading = false;
+    }
+  }
+
+  loadTaskData() {
+    this.loading = true;
+    this.error = null;
+
+    this.taskService.getTaskDetails(this.taskId!).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.task = response.data;
+          this.loadTaskActivities();
+        } else {
+          this.error = response.message || 'Failed to load task details';
+          this.loading = false;
+        }
+      },
+      error: (err) => {
+        console.error('Failed to load task details', err);
+        this.error = 'Failed to load task details';
+        this.loading = false;
+      }
+    });
+  }
+
+  loadTaskActivities() {
+    this.taskService.getTaskActivities(this.taskId!).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.activities = response.data;
+        }
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load task activities', err);
+        this.activities = [];
+        this.loading = false;
+      }
+    });
+  }
+
+  getPriorityClass(priority: string): string {
+    return `priority-${priority.toLowerCase()}`;
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  formatDateTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 }

@@ -18,5 +18,15 @@ namespace Business.Services.Interfaces
         /// Retrieves the paginated and filtered list of tasks for the data table.
         /// </summary>
         Task<ApiResponseDto<PaginatedResponseDto<TaskListResponseDto>>> GetTaskList(Guid userId, TaskFilterRequestDto filter, string baseUrl);
+
+        /// <summary>
+        /// Retrieves the details of a specific task, formatting image URLs appropriately.
+        /// </summary>
+        Task<ApiResponseDto<TaskDetailsResponseDto>> GetTaskDetails(Guid taskId, string baseUrl);
+
+        /// <summary>
+        /// Retrieves the activity log history for a specific task.
+        /// </summary>
+        Task<ApiResponseDto<IEnumerable<TaskActivityResponseDto>>> GetTaskActivities(Guid taskId);
     }
 }

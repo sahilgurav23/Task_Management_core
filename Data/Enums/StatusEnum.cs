@@ -5,7 +5,7 @@ namespace Data.Enums
     /// <summary>
     /// Represents the current progression state of a task.
     /// </summary>
-    public enum Status
+    public enum StatusEnum
     {
         [Description("To Do")]
         ToDo = 1,

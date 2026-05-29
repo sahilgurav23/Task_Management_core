@@ -3,6 +3,7 @@ using DataAccess.Context;
 using DataAccess.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Data.Enums;
+using DTOs.Responses;
 namespace DataAccess.Repositories.Implementations
 {
     public class ProjectTaskRepository : IProjectTaskRepository
@@ -24,7 +25,7 @@ namespace DataAccess.Repositories.Implementations
         /// <summary>
         /// Implements an optimized inner join between ProjectTasks and Profiles.
         /// </summary>
-        public async Task<(IEnumerable<DTOs.Responses.TaskListResponseDto> Tasks, int TotalCount)> GetTaskTableData(Guid userId, string? searchTerm, int? statusId, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<TaskListResponseDto> Tasks, int TotalCount)> GetTaskTableData(Guid userId, string? searchTerm, int? statusId, int pageNumber, int pageSize)
         {
             var query = from pt in context.ProjectTasks.AsNoTracking()
                         join p in context.Profiles.AsNoTracking()
@@ -75,6 +76,31 @@ namespace DataAccess.Repositories.Implementations
             await context.SaveChangesAsync();
 
             return task.Id;
+        }
+
+        /// <summary>
+        /// Translates to an INNER JOIN between ProjectTasks and Profiles for a specific Task ID.
+        /// Automatically maps integer IDs to Enum string names.
+        /// </summary>
+        public async Task<TaskDetailsResponseDto?> GetTaskDetails(Guid taskId)
+        {
+            return await (from pt in context.ProjectTasks.AsNoTracking()
+                          join p in context.Profiles.AsNoTracking()
+                          on pt.AssignedUserId equals p.Id
+                          where pt.Id == taskId
+                          select new DTOs.Responses.TaskDetailsResponseDto
+                          {
+                              TaskId = pt.Id,
+                              Title = pt.Title,
+                              Description = pt.Description,
+                              PriorityId = pt.PriorityId,
+                              Priority = ((PriorityEnum)pt.PriorityId).ToString(),
+                              StatusId = pt.StatusId,
+                              Status = ((StatusEnum)pt.StatusId).ToString(),
+                              AssigneeName = p.FullName,
+                              AssigneeImageUrl = p.ProfileImagePath,
+                              DueDate = pt.DueDate
+                          }).FirstOrDefaultAsync();
         }
     }
 }

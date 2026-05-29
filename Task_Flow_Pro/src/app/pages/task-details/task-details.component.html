@@ -1,112 +1,119 @@
 <app-layout>
   <div class="task-details-container">
-    <!-- Header -->
-    <div class="details-header">
-      <h1>Task Details</h1>
-      <div class="header-actions">
-        <button mat-stroked-button class="edit-btn">
-          <mat-icon>edit</mat-icon>
-          Edit
-        </button>
-        <button mat-flat-button color="primary" class="complete-btn">
-          <mat-icon>check_circle</mat-icon>
-          Complete Task
-        </button>
-      </div>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading task details...</p>
     </div>
 
-    <div class="details-grid">
-      <!-- Main Content -->
-      <div class="main-column">
-        <mat-card class="content-card">
-          <mat-card-content>
-            <h2 class="task-title">{{task.title}}</h2>
-            <div class="task-description">
-              <p *ngFor="let paragraph of task.description.split('\n')">{{paragraph}}</p>
-            </div>
+    <!-- Error State -->
+    <div *ngIf="error" class="error-container">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>{{error}}</p>
+      <button mat-button (click)="loadTaskData()">Retry</button>
+    </div>
 
-            <mat-divider></mat-divider>
-
-            <div class="task-footer">
-              <div class="footer-item">
-                <div class="icon-circle">
-                  <mat-icon>calendar_today</mat-icon>
-                </div>
-                <div class="footer-info">
-                  <span class="label">DUE DATE</span>
-                  <span class="value">{{task.dueDate}}</span>
-                </div>
-              </div>
-              <div class="footer-divider"></div>
-              <div class="footer-item">
-                <div class="footer-info">
-                  <span class="label">ASSIGNED TO</span>
-                  <div class="assignee-box">
-                    <img [src]="task.assignee.avatar" alt="Assignee" class="assignee-img">
-                    <span class="value">{{task.assignee.name}}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+    <!-- Content -->
+    <div *ngIf="!loading && !error && task">
+      <!-- Header -->
+      <div class="details-header">
+        <h1>Task Details</h1>
+        <div class="header-actions">
+          <button mat-stroked-button class="edit-btn">
+            <mat-icon>edit</mat-icon>
+            Edit
+          </button>
+          <button mat-flat-button color="primary" class="complete-btn">
+            <mat-icon>check_circle</mat-icon>
+            Complete Task
+          </button>
+        </div>
       </div>
 
-      <!-- Sidebar -->
-      <div class="sidebar-column">
-        <!-- Details Widget -->
-        <mat-card class="widget-card">
-          <mat-card-content>
-            <h3>Details</h3>
-            
-            <div class="widget-item">
-              <span class="widget-label">STATUS</span>
-              <div class="status-chip">
-                <span class="dot"></span>
-                {{task.status}}
+      <div class="details-grid">
+        <!-- Main Content -->
+        <div class="main-column">
+          <mat-card class="content-card">
+            <mat-card-content>
+              <h2 class="task-title">{{task.title}}</h2>
+              <div class="task-description">
+                <p>{{task.description}}</p>
               </div>
-            </div>
 
-            <div class="widget-item">
-              <span class="widget-label">PRIORITY</span>
-              <div class="priority-chip high">
-                <mat-icon>priority_high</mat-icon>
-                {{task.priority}}
-              </div>
-            </div>
+              <mat-divider></mat-divider>
 
-            <div class="widget-item">
-              <span class="widget-label">PROJECT</span>
-              <div class="project-box">
-                <mat-icon>folder_open</mat-icon>
-                {{task.project}}
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <!-- Activity Log -->
-        <mat-card class="widget-card activity-card">
-          <mat-card-content>
-            <h3>Activity Log</h3>
-            <div class="timeline">
-              <div class="timeline-item" *ngFor="let activity of task.activities; let last = last">
-                <div class="timeline-dot" [ngClass]="activity.type"></div>
-                <div class="timeline-content">
-                  <div class="activity-msg">
-                    {{activity.message}} 
-                    <span *ngIf="activity.type === 'priority'" class="high-text">High</span>
-                    <span *ngIf="activity.type === 'status'" class="in-progress-text">In Progress</span>
+              <div class="task-footer">
+                <div class="footer-item">
+                  <div class="icon-circle">
+                    <mat-icon>calendar_today</mat-icon>
                   </div>
-                  <div class="activity-date">
-                    {{activity.date}} • by {{activity.user}}
+                  <div class="footer-info">
+                    <span class="label">DUE DATE</span>
+                    <span class="value">{{formatDate(task.dueDate)}}</span>
                   </div>
                 </div>
-                <div class="timeline-line" *ngIf="!last"></div>
+                <div class="footer-divider"></div>
+                <div class="footer-item">
+                  <div class="footer-info">
+                    <span class="label">ASSIGNED TO</span>
+                    <div class="assignee-box">
+                      <img [src]="task.assigneeImageUrl || 'https://ui-avatars.com/api/?name=' + task.assigneeName" alt="Assignee" class="assignee-img">
+                      <span class="value">{{task.assigneeName}}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar-column">
+          <!-- Details Widget -->
+          <mat-card class="widget-card">
+            <mat-card-content>
+              <h3>Details</h3>
+              
+              <div class="widget-item">
+                <span class="widget-label">STATUS</span>
+                <div class="status-chip">
+                  <span class="dot"></span>
+                  {{task.status}}
+                </div>
+              </div>
+
+              <div class="widget-item">
+                <span class="widget-label">PRIORITY</span>
+                <div class="priority-chip" [ngClass]="getPriorityClass(task.priority)">
+                  <mat-icon>priority_high</mat-icon>
+                  {{task.priority}}
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Activity Log -->
+          <mat-card class="widget-card activity-card">
+            <mat-card-content>
+              <h3>Activity Log</h3>
+              <div class="timeline" *ngIf="activities.length > 0">
+                <div class="timeline-item" *ngFor="let activity of activities; let last = last">
+                  <div class="timeline-dot"></div>
+                  <div class="timeline-content">
+                    <div class="activity-msg">
+                      {{activity.description}}
+                    </div>
+                    <div class="activity-date">
+                      {{formatDateTime(activity.createdOn)}} • by {{activity.createdByName}}
+                    </div>
+                  </div>
+                  <div class="timeline-line" *ngIf="!last"></div>
+                </div>
+              </div>
+              <p *ngIf="activities.length === 0" class="no-activities">No activities yet</p>
+            </mat-card-content>
+          </mat-card>
+        </div>
       </div>
     </div>
   </div>

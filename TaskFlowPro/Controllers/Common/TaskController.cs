@@ -89,5 +89,40 @@ namespace TaskFlowPro.Controllers.Common
 
             return Ok(response);
         }
+
+
+        /// <summary>
+        /// Retrieves full details for a specific task based on its ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the task.</param>
+        /// <returns>A 200 OK with the task details or 404 Not Found.</returns>
+        [HttpGet("{id:guid}/details")]
+        [ProducesResponseType(typeof(ApiResponseDto<TaskDetailsResponseDto>), 200)]
+        [ProducesResponseType(typeof(ApiResponseDto<TaskDetailsResponseDto>), 404)]
+        public async Task<IActionResult> GetTaskDetails(Guid id)
+        {
+            var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+
+            var response = await taskService.GetTaskDetails(id, baseUrl);
+
+            if (!response.Success)
+                return NotFound(response);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Retrieves the historical activity logs for a specific task.
+        /// </summary>
+        /// <param name="id">The unique identifier of the task.</param>
+        /// <returns>A 200 OK containing an array of activity entries.</returns>
+        [HttpGet("{id:guid}/activities")]
+        [ProducesResponseType(typeof(ApiResponseDto<IEnumerable<TaskActivityResponseDto>>), 200)]
+        public async Task<IActionResult> GetTaskActivities(Guid id)
+        {
+            var response = await taskService.GetTaskActivities(id);
+
+            return Ok(response);
+        }
     }
 }

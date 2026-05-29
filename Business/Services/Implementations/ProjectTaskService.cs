@@ -1,5 +1,6 @@
 using Business.Services.Interfaces;
 using Data.Entities;
+using DataAccess.Repositories.Implementations;
 using DataAccess.Repositories.Interfaces;
 using DTOs.Common;
 using DTOs.Requests;
@@ -10,10 +11,12 @@ namespace Business.Services.Implementations
     public class ProjectTaskService : IProjectTaskService
     {
         private readonly IProjectTaskRepository taskRepository;
+        private readonly IActivityLogRepository activityLogRepository;
 
-        public ProjectTaskService(IProjectTaskRepository taskRepository)
+        public ProjectTaskService(IProjectTaskRepository TaskRepository, IActivityLogRepository ActivityLogRepository)
         {
-            this.taskRepository = taskRepository;
+            taskRepository = TaskRepository;
+            activityLogRepository = ActivityLogRepository;
         }
 
         public async Task<ApiResponseDto<Guid>> CreateTask(CreateTaskRequestDto request, Guid currentUserId)
@@ -88,6 +91,49 @@ namespace Business.Services.Implementations
                 Success = true,
                 Message = "Task list fetched successfully.",
                 Data = paginatedData
+            };
+        }
+
+        /// <summary>
+        /// Fetches task details and applies environment-specific base URLs for images.
+        /// </summary>
+        public async Task<ApiResponseDto<TaskDetailsResponseDto>> GetTaskDetails(Guid taskId, string baseUrl)
+        {
+            var taskDetails = await taskRepository.GetTaskDetails(taskId);
+
+            if (taskDetails == null)
+            {
+                return new ApiResponseDto<TaskDetailsResponseDto>
+                {
+                    Success = false,
+                    Message = "Task not found.",
+                    Errors = new List<string> { $"No task exists with ID: {taskId}" }
+                };
+            }
+
+            if (!string.IsNullOrEmpty(taskDetails.AssigneeImageUrl))
+                taskDetails.AssigneeImageUrl = $"{baseUrl}/{taskDetails.AssigneeImageUrl.TrimStart('/')}";
+
+            return new ApiResponseDto<TaskDetailsResponseDto>
+            {
+                Success = true,
+                Message = "Task details fetched successfully.",
+                Data = taskDetails
+            };
+        }
+
+        /// <summary>
+        /// Fetches chronological task activities. No base URL required as this is text-only.
+        /// </summary>
+        public async Task<ApiResponseDto<IEnumerable<TaskActivityResponseDto>>> GetTaskActivities(Guid taskId)
+        {
+            var activities = await activityLogRepository.GetTaskActivities(taskId);
+
+            return new ApiResponseDto<IEnumerable<TaskActivityResponseDto>>
+            {
+                Success = true,
+                Message = "Task activities fetched successfully.",
+                Data = activities
             };
         }
     }

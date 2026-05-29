@@ -20,6 +20,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddScoped<ILoginRepository, LoginRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IProjectTaskRepository, ProjectTaskRepository>();
+builder.Services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
 
 // Business Layer (Services)
 builder.Services.AddScoped<ILoginService, LoginService>();
