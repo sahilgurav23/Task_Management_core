@@ -23,11 +23,11 @@
             <mat-icon>arrow_back</mat-icon>
             Back
           </button>
-          <button mat-stroked-button class="edit-btn" (click)="onEditTask()">
+          <button mat-stroked-button class="edit-btn" [disabled]="!canEdit" (click)="onEditTask()">
             <mat-icon>edit</mat-icon>
             Edit
           </button>
-          <button mat-flat-button color="primary" class="complete-btn" [disabled]="!canEditDetails" (click)="onCompleteTask()">
+          <button mat-flat-button color="primary" class="complete-btn" [disabled]="!canEdit" (click)="onCompleteTask()">
             <mat-icon>check_circle</mat-icon>
             Complete Task
           </button>

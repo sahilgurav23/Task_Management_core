@@ -8,7 +8,21 @@
       [fixedInViewport]="isMobile"
       (closedStart)="isSidebarOpen = false">
       
-      <app-left-navigation (navItemClicked)="isMobile ? isSidebarOpen = false : null"></app-left-navigation>
+      <!-- Role-based Navigation -->
+      <app-left-navigation 
+        *ngIf="isAdminRole()" 
+        (navItemClicked)="isMobile ? isSidebarOpen = false : null">
+      </app-left-navigation>
+      
+      <app-user-navigation 
+        *ngIf="isUserRole()" 
+        (navItemClicked)="isMobile ? isSidebarOpen = false : null">
+      </app-user-navigation>
+      
+      <app-administrator-navigation 
+        *ngIf="isAdministratorRole()" 
+        (navItemClicked)="isMobile ? isSidebarOpen = false : null">
+      </app-administrator-navigation>
     </mat-sidenav>
 
     <!-- Main Content -->

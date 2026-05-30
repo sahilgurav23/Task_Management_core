@@ -191,13 +191,14 @@ export class CreateEditTaskComponent implements OnInit {
     if (this.taskForm.valid) {
       if (this.isEditMode && this.taskId) {
         // Update existing task
+        const dueDateValue = this.taskForm.value.dueDate;
         const updateData: UpdateTaskRequest = {
           title: this.taskForm.value.title,
           description: this.taskForm.value.description,
           priorityId: this.taskForm.value.priorityId,
           statusId: this.taskForm.value.statusId,
           assignedUserId: this.taskForm.value.assigneeId,
-          dueDate: new Date(this.taskForm.value.dueDate).toISOString()
+          dueDate: dueDateValue ? new Date(dueDateValue).toISOString() : undefined
         };
 
         // Only include fields that are editable based on permissions

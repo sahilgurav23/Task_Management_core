@@ -134,13 +134,13 @@ export class LoginComponent {
   private redirectBasedOnRole(role: number): void {
     switch (role) {
       case RoleEnum.User:
-        this.router.navigate(['/user/dashboard']);
+        this.router.navigate(['/tasks']);
         break;
       case RoleEnum.Admin:
         this.router.navigate(['/admin/dashboard']);
         break;
       case RoleEnum.Administrator:
-        this.router.navigate(['/administrator/dashboard']);
+        this.router.navigate(['/tasks']);
         break;
       default:
         this.router.navigate(['/dashboard']);

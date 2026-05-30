@@ -197,13 +197,24 @@ namespace Business.Services.Implementations
             }
             else if (isAssignee)
             {
-                if (request.StatusId.HasValue && task.StatusId != request.StatusId.Value)
+                if (request.StatusId.HasValue)
                 {
-                    task.StatusId = request.StatusId.Value;
-                    logDescription = $"Updated task status to {((StatusEnum)task.StatusId).ToString()}.";
+                    if (task.StatusId != request.StatusId.Value)
+                    {
+                        task.StatusId = request.StatusId.Value;
+                        logDescription = $"Updated task status to {((StatusEnum)task.StatusId).ToString()}.";
+                    }
+                    else
+                    {
+                        // Status is the same, but still return success since the user has permission
+                        return new ApiResponseDto<bool> { Success = true, Message = "Task status unchanged.", Data = true };
+                    }
                 }
                 else
-                    return new ApiResponseDto<bool> { Success = true, Message = "No authorized changes detected.", Data = true };
+                {
+                    // Assignee trying to update other fields without statusId
+                    return new ApiResponseDto<bool> { Success = false, Message = "Forbidden: Assignees can only update task status." };
+                }
             }
 
             task.UpdatedOn = DateTime.UtcNow;

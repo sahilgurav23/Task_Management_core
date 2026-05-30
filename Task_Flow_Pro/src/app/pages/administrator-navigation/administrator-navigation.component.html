@@ -1,0 +1,26 @@
+<div class="sidebar-wrapper">
+  <!-- Logo Section -->
+  <div class="sidebar-header">
+    <div class="logo-icon"></div>
+    <h2 class="brand-name">EnterpriseSaaS</h2>
+  </div>
+
+  <!-- Navigation Items -->
+  <mat-nav-list class="sidebar-nav">
+    <mat-list-item 
+      *ngFor="let item of navItems"
+      (click)="selectNavItem(item)"
+      [class.active-item]="selectedNavItem === item.value"
+      class="nav-list-item">
+      
+      <div class="item-content">
+        <mat-icon matListItemIcon class="nav-icon">{{ item.icon }}</mat-icon>
+        
+        <span class="nav-label">{{ item.label }}</span>
+      </div>
+      
+      <!-- Selection Indicator -->
+      <div *ngIf="selectedNavItem === item.value" class="active-indicator"></div>
+    </mat-list-item>
+  </mat-nav-list>
+</div>

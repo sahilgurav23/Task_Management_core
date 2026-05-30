@@ -30,7 +30,7 @@ namespace DataAccess.Repositories.Implementations
             var query = from pt in context.ProjectTasks.AsNoTracking()
                         join p in context.Profiles.AsNoTracking()
                         on pt.AssignedUserId equals p.Id
-                        where pt.AssignedUserId == userId
+                        where pt.AssignedUserId == userId || pt.CreatedById == userId
                         select new { pt, p };
 
             if (statusId.HasValue)

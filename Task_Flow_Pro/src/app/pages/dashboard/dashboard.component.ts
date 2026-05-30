@@ -96,8 +96,7 @@ export class DashboardComponent implements OnInit {
   getDonutSegment(index: number): string {
     if (!this.dashboardData?.pieChartData?.priorities) return '0 100';
     
-    const priorities = this.dashboardData.pieChartData.priorities;
-    const colors = ['#4285F4', '#F4B400', '#EA4335'];
+    const priorities = this.dashboardData.pieChartData.priorities.filter(p => p.taskCount > 0);
     
     let accumulatedPercentage = 0;
     for (let i = 0; i < index; i++) {
@@ -106,13 +105,31 @@ export class DashboardComponent implements OnInit {
     
     const currentPercentage = priorities[index]?.percentage || 0;
     const segmentLength = currentPercentage;
-    const gapLength = 100 - segmentLength - accumulatedPercentage;
+    const gapLength = 100 - segmentLength;
     
-    return `${segmentLength} ${gapLength} ${accumulatedPercentage} 0`;
+    return `${segmentLength} ${gapLength}`;
+  }
+
+  getDonutOffset(index: number): number {
+    if (!this.dashboardData?.pieChartData?.priorities) return 0;
+    
+    const priorities = this.dashboardData.pieChartData.priorities.filter(p => p.taskCount > 0);
+    
+    let accumulatedPercentage = 0;
+    for (let i = 0; i < index; i++) {
+      accumulatedPercentage += priorities[i]?.percentage || 0;
+    }
+    
+    return -accumulatedPercentage;
   }
 
   getPriorityColor(index: number): string {
     const colors = ['#4285F4', '#F4B400', '#EA4335'];
     return colors[index % colors.length];
+  }
+
+  get filteredPriorities() {
+    if (!this.dashboardData?.pieChartData?.priorities) return [];
+    return this.dashboardData.pieChartData.priorities.filter(p => p.taskCount > 0);
   }
 }

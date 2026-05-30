@@ -45,6 +45,11 @@ export class TaskDetailsComponent implements OnInit {
   task: TaskDetails | null = null;
   activities: TaskActivity[] = [];
   canEditDetails = true;
+  canEditStatus = true;
+
+  get canEdit(): boolean {
+    return this.canEditDetails || this.canEditStatus;
+  }
 
   ngOnInit() {
     this.taskId = this.route.snapshot.paramMap.get('id');
@@ -99,6 +104,7 @@ export class TaskDetailsComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           this.canEditDetails = response.data.canEditDetails;
+          this.canEditStatus = response.data.canEditStatus;
         }
         this.loading = false;
       },
