@@ -7,50 +7,104 @@
     </div>
     <div class="header-actions">
       <button mat-button [matMenuTriggerFor]="menu" class="period-selector">
-        This Week
+        {{ selectedPeriod }}
         <mat-icon>arrow_drop_down</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <button mat-menu-item>This Week</button>
-        <button mat-menu-item>This Month</button>
-        <button mat-menu-item>This Year</button>
+        <button mat-menu-item (click)="onPeriodChange('This Week', 1)">This Week</button>
+        <button mat-menu-item (click)="onPeriodChange('This Month', 2)">This Month</button>
+        <button mat-menu-item (click)="onPeriodChange('This Year', 3)">This Year</button>
       </mat-menu>
     </div>
   </div>
 
-  <!-- Summary Cards -->
-  <div class="summary-cards">
-    <mat-card *ngFor="let card of summaryCards" class="summary-card">
-      <div class="card-content">
-        <h3>{{ card.title }}</h3>
-        <div class="card-value">{{ card.value }}</div>
-        <div class="card-indicator" [class]="card.color">
-          {{ card.indicator }}
-        </div>
-      </div>
-    </mat-card>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading dashboard data...</p>
   </div>
 
-  <!-- Charts Section -->
-  <div class="charts-section">
-    <!-- Tasks by Status Chart -->
-    <mat-card class="chart-card">
-      <div class="chart-header">
-        <h3>Tasks by Status</h3>
-      </div>
-      <div class="chart-placeholder">
-        <!-- Chart placeholder - blank as requested -->
-      </div>
-    </mat-card>
+  <!-- Error State -->
+  <div *ngIf="error" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadDashboardData()">Retry</button>
+  </div>
 
-    <!-- Priority Breakdown Chart -->
-    <mat-card class="chart-card">
-      <div class="chart-header">
-        <h3>Priority Breakdown</h3>
-      </div>
-      <div class="chart-placeholder">
-        <!-- Chart placeholder - blank as requested -->
-      </div>
-    </mat-card>
+  <!-- Content -->
+  <div *ngIf="!loading && !error && dashboardData">
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <mat-card *ngFor="let card of summaryCards" class="summary-card">
+        <div class="card-content">
+          <h3>{{ card.title }}</h3>
+          <div class="card-value">{{ card.value }}</div>
+          <div class="card-indicator" [class]="card.color">
+            {{ card.indicator }}
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-section">
+      <!-- Tasks by Status Chart -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <h3>Tasks by Status</h3>
+        </div>
+        <div class="chart-content">
+          <div *ngIf="dashboardData.barChartData && dashboardData.barChartData.length > 0" class="vertical-bar-chart">
+            <div class="bars-container">
+              <div *ngFor="let item of dashboardData.barChartData; let i = index" class="vertical-bar-item">
+                <div class="bar-wrapper">
+                  <div class="bar-value-top">{{ item.taskCount }}</div>
+                  <div class="vertical-bar-fill" [style.height.%]="getBarPercentage(item.taskCount, dashboardData.summary.totalTasks)" [ngClass]="getBarColorClass(i)">
+                  </div>
+                  <div class="bar-label-bottom">{{ item.statusName }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!dashboardData.barChartData || dashboardData.barChartData.length === 0" class="no-data">
+            <p>No data available</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Priority Breakdown Chart -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <h3>Priority Breakdown</h3>
+        </div>
+        <div class="chart-content">
+          <div *ngIf="dashboardData.pieChartData.priorities && dashboardData.pieChartData.priorities.length > 0" class="donut-chart-container">
+            <div class="donut-wrapper">
+              <svg width="200" height="200" viewBox="0 0 200 200" class="donut-chart">
+                <rect x="25" y="25" width="150" height="150" rx="30" fill="none" stroke="#4285F4" stroke-width="30" pathLength="100" [attr.stroke-dasharray]="getDonutSegment(0)"></rect>
+                <rect x="25" y="25" width="150" height="150" rx="30" fill="none" stroke="#F4B400" stroke-width="30" pathLength="100" [attr.stroke-dasharray]="getDonutSegment(1)"></rect>
+                <rect x="25" y="25" width="150" height="150" rx="30" fill="none" stroke="#EA4335" stroke-width="30" pathLength="100" [attr.stroke-dasharray]="getDonutSegment(2)"></rect>
+              </svg>
+              <div class="donut-center">
+                <span class="total-num">{{ dashboardData.pieChartData.totalTasks }}</span>
+                <span class="total-label">Total</span>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div *ngFor="let item of dashboardData.pieChartData.priorities; let i = index" class="legend-item">
+                <div class="color-box" [ngStyle]="{'background-color': getPriorityColor(i)}"></div>
+                <div class="legend-text">
+                  <span class="legend-title">{{ item.priorityName }}</span>
+                  <span class="legend-desc">{{ item.percentage.toFixed(0) }}% ({{ item.taskCount }} tasks)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!dashboardData.pieChartData.priorities || dashboardData.pieChartData.priorities.length === 0" class="no-data">
+            <p>No data available</p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
   </div>
 </app-layout>

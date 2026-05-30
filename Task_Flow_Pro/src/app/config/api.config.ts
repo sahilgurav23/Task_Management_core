@@ -14,6 +14,9 @@ export class ApiConfig {
       // Task endpoints
       task: `${this.baseUrl}/api/Task`,
       
+      // Dashboard endpoints
+      dashboard: `${this.baseUrl}/api/admin/dashboard`,
+      
       // Add more endpoints here as needed
       // user: `${this.baseUrl}/api/User`,
       // admin: `${this.baseUrl}/api/Admin`,
