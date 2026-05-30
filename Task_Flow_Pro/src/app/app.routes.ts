@@ -4,6 +4,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { TasksManagementComponent } from './pages/tasks-management/tasks-management.component';
 import { TaskDetailsComponent } from './pages/task-details/task-details.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { AdminReportComponent } from './pages/admin-report/admin-report.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -19,7 +20,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'tasks', component: TasksManagementComponent },
       { path: 'tasks/:id', component: TaskDetailsComponent },
-      { path: 'profile', component: ProfileComponent }
+      { path: 'profile', component: ProfileComponent },
+      { path: 'admin/report', component: AdminReportComponent }
     ]
   }
 ];

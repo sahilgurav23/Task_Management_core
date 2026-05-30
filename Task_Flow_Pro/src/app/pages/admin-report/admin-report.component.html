@@ -1,0 +1,120 @@
+<app-layout>
+  <div class="report-container">
+    <!-- Header -->
+    <div class="report-header">
+      <h1>Task Completion Report</h1>
+      <p>Track task completion trends over time</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading report data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="error-container">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-button (click)="loadReportData()">Retry</button>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!loading && !error && reportData">
+      <!-- Monthly Line Graph -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <h3>Yearly Task Completion (Monthly)</h3>
+        </div>
+        <div class="chart-content">
+          <div *ngIf="reportData.monthlyTrend && reportData.monthlyTrend.length > 0" class="line-graph-container">
+            <svg class="line-graph" viewBox="0 0 1000 350" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line x1="80" y1="30" x2="80" y2="280" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="80" y1="280" x2="980" y2="280" stroke="#e2e8f0" stroke-width="1"/>
+              
+              <!-- Y-axis labels -->
+              <text x="70" y="35" text-anchor="end" font-size="12" fill="#64748b">{{getMaxYValue(reportData.monthlyTrend)}}</text>
+              <text x="70" y="155" text-anchor="end" font-size="12" fill="#64748b">{{Math.round(getMaxYValue(reportData.monthlyTrend) / 2)}}</text>
+              <text x="70" y="280" text-anchor="end" font-size="12" fill="#64748b">0</text>
+              
+              <!-- Line path -->
+              <polyline 
+                [attr.points]="getLinePoints(reportData.monthlyTrend, 1000, 350)" 
+                fill="none" 
+                stroke="#3b82f6" 
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+              
+              <!-- Data points -->
+              <circle *ngFor="let point of reportData.monthlyTrend; let i = index" 
+                [attr.cx]="getXPosition(i, reportData.monthlyTrend.length, 1000)" 
+                [attr.cy]="getYPosition(point.taskCount, getMaxYValue(reportData.monthlyTrend), 350)" 
+                r="5" 
+                fill="#3b82f6" 
+                stroke="#ffffff" 
+                stroke-width="2"/>
+              
+              <!-- X-axis labels (show every other label to prevent overlap) -->
+              <ng-container *ngFor="let point of reportData.monthlyTrend; let i = index">
+                <text *ngIf="i % 2 === 0"
+                  [attr.x]="getXPosition(i, reportData.monthlyTrend.length, 1000)"
+                  y="310"
+                  text-anchor="middle"
+                  font-size="11"
+                  fill="#64748b">{{point.monthLabel}}</text>
+              </ng-container>
+            </svg>
+          </div>
+          <div *ngIf="!reportData.monthlyTrend || reportData.monthlyTrend.length === 0" class="no-data">
+            <p>No monthly data available</p>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Daily Bar Graph -->
+      <mat-card class="chart-card">
+        <div class="chart-header">
+          <h3>Weekly Task Completion (Daily)</h3>
+        </div>
+        <div class="chart-content">
+          <div *ngIf="reportData.dailyTrend && reportData.dailyTrend.length > 0" class="bar-graph-container">
+            <svg class="bar-graph" viewBox="0 0 1000 350" preserveAspectRatio="none">
+              <!-- Grid lines -->
+              <line x1="80" y1="30" x2="80" y2="280" stroke="#e2e8f0" stroke-width="1"/>
+              <line x1="80" y1="280" x2="980" y2="280" stroke="#e2e8f0" stroke-width="1"/>
+              
+              <!-- Y-axis labels -->
+              <text x="70" y="35" text-anchor="end" font-size="12" fill="#64748b">{{getMaxYValue(reportData.dailyTrend)}}</text>
+              <text x="70" y="155" text-anchor="end" font-size="12" fill="#64748b">{{Math.round(getMaxYValue(reportData.dailyTrend) / 2)}}</text>
+              <text x="70" y="280" text-anchor="end" font-size="12" fill="#64748b">0</text>
+              
+              <!-- Bars -->
+              <rect *ngFor="let point of reportData.dailyTrend; let i = index"
+                [attr.x]="getXPosition(i, reportData.dailyTrend.length, 1000) - 12"
+                [attr.y]="getYPosition(point.taskCount, getMaxYValue(reportData.dailyTrend), 350)"
+                width="24"
+                [attr.height]="getBarHeight(point.taskCount, getMaxYValue(reportData.dailyTrend), 350)"
+                fill="#22c55e"
+                rx="2"/>
+              
+              <!-- X-axis labels (show every 5th label to prevent overlap for 30 days) -->
+              <ng-container *ngFor="let point of reportData.dailyTrend; let i = index">
+                <text *ngIf="i % 5 === 0"
+                  [attr.x]="getXPosition(i, reportData.dailyTrend.length, 1000)"
+                  y="310"
+                  text-anchor="middle"
+                  font-size="10"
+                  fill="#64748b">{{point.dateLabel}}</text>
+              </ng-container>
+            </svg>
+          </div>
+          <div *ngIf="!reportData.dailyTrend || reportData.dailyTrend.length === 0" class="no-data">
+            <p>No daily data available</p>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</app-layout>

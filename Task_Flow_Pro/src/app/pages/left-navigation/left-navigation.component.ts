@@ -19,7 +19,7 @@ export class LeftNavigationComponent {
   navItems = [
     { icon: 'dashboard', label: 'Dashboard', value: 'dashboard', route: '/dashboard' },
     { icon: 'task', label: 'Tasks', value: 'tasks', route: '/tasks' },
-    { icon: 'bar_chart', label: 'Reports', value: 'reports', route: '/reports' },
+    { icon: 'bar_chart', label: 'Reports', value: 'reports', route: '/admin/report' },
     { icon: 'person', label: 'Profile', value: 'profile', route: '/profile' }
   ];
 

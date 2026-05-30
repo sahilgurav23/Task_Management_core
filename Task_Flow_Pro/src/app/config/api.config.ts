@@ -17,6 +17,9 @@ export class ApiConfig {
       // Dashboard endpoints
       dashboard: `${this.baseUrl}/api/admin/dashboard`,
       
+      // Report endpoints
+      report: `${this.baseUrl}/api/admin/report`,
+      
       // Add more endpoints here as needed
       // user: `${this.baseUrl}/api/User`,
       // admin: `${this.baseUrl}/api/Admin`,
